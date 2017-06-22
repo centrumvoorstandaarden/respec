@@ -100,6 +100,9 @@ define(
         .runAll(args)
         .then(document.respecIsReady)
         .then(ui.enable)
+        .then(function() {
+          document.body.hidden = false;
+        })
         .catch(function(err) {
           console.error(err);
           // In case processing fails, we still want to show the document.
