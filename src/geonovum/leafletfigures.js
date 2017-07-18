@@ -4,11 +4,17 @@
  */
 import L from "geonovum/deps/leaflet";
 import easyButton from "geonovum/deps/easy-button";
+import { sub } from "core/pubsubhub";
 import "deps/regenerator";
 
 export const name = "geonovum/leafletfigures";
 
+function addLeafletOnSave(rootElem) {
+  debugger;
+}
+
 export async function run(conf, doc, cb) {
+  sub("beforesave", addLeafletOnSave, { once: true });
   cb();
   await document.respecIsReady;
   document.querySelectorAll("figure.scalable img").forEach(image => {

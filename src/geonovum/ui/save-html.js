@@ -21,6 +21,7 @@ const button = ui.addCommand(
 );
 
 function cleanup(rootEl) {
+  debugger;
   $(".removeOnSave", rootEl).remove();
   $("#toc-nav", rootEl).remove();
   $("body", rootEl).removeClass("toc-sidebar");
@@ -52,6 +53,8 @@ function cleanup(rootEl) {
   metaGenerator.content =
     "ReSpec " + window.respecVersion || "Developer Channel";
   head.insertBefore(metaGenerator, head.lastChild);
+  debugger
+  pub("beforesave", rootEl);
 }
 
 // Clean up markup to overcome bugs in beautifier
@@ -61,8 +64,6 @@ function preBeautify(str) {
 
 const save = {
   show() {
-    if (!conf.diffTool)
-      conf.diffTool = "https://www5.aptest.com/standards/htmldiff/htmldiff.pl";
     var supportsDownload =
         Object.getOwnPropertyNames(HTMLAnchorElement.prototype).indexOf(
           "download"
@@ -153,6 +154,7 @@ const save = {
   // convert the document to a string (HTML)
   toString() {
     pub("save", "toString");
+    debugger;
     var str = "<!DOCTYPE html",
       dt = doc.doctype;
     if (dt && dt.publicId)
@@ -297,6 +299,7 @@ const save = {
   // },
   // popup the generated source
   toHTMLSource() {
+    debugger;
     var x = window.open();
     x.document.write("<pre>" + xmlEscape(this.toString()) + "</pre>");
     x.document.close();
