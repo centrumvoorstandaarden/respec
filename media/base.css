@@ -605,6 +605,18 @@ figure object {
   max-width: 100%;
   margin: auto;
 }
+
+/*
+Thijs Brentjens Geonovum: a fix to show images that get a width=0 and height=0 by ReSpec and thus are hidden
+See https://github.com/Geonovum/respec/issues/153
+ */
+.figure img, .sidefigure img, figure img, .figure object, .sidefigure object, figure object {
+ /*height: 100%;*/
+ width: auto;
+}
+
+/* end customization Geonovum fix */
+
 .figure pre,
 .sidefigure pre,
 figure pre {
@@ -898,6 +910,17 @@ td {
   text-align: left;
   text-align: start;
 }
+
+/* Thijs Brentjens Geonovum add a thin border for tables as a default  */
+/* TODO :fix issue with localstyle for https://docs.geostandaarden.nl/md/mdprofiel-iso19115/ */
+
+/*table, tr, td, th {
+    border: none;
+}
+
+td {
+    border-top: 1px solid #ddd;
+}*/
 
 /** Property/Descriptor Definition Tables *************************************/
 
@@ -1297,17 +1320,17 @@ table.index th:first-child a {
   nav > h2 {
     page-break-before: always;
   }
-  
+
   html {
     font-size: 12pt;
     margin: 0;
   }
-  
+
   /* Serif for print. */
   body {
     font-family: serif;
   }
-  
+
   figure.scalable img[hidden] {
     display: block;
   }
