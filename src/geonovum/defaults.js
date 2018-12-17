@@ -2,12 +2,16 @@
  * Sets the defaults for Geonovum documents
  */
 export const name = "geonovum/defaults";
-import linter from "core/linter";
-import { rule as noHeadinglessSectionsRule } from "core/linter-rules/no-headingless-sections";
-import { rule as noHttpPropsRule } from "core/linter-rules/no-http-props";
-import { rule as privsecSectionRule } from "geonovum/linter-rules/privsec-section";
+import { rule as checkPunctuation } from "../core/linter-rules/check-punctuation";
+import linter from "../core/linter";
+import { rule as localRefsExist } from "../core/linter-rules/local-refs-exist";
+import { rule as noHeadinglessSectionsRule } from "../core/linter-rules/no-headingless-sections";
+import { rule as noHttpPropsRule } from "../core/linter-rules/no-http-props";
+import { rule as privsecSectionRule } from "./linter-rules/privsec-section";
 
-linter.register(noHttpPropsRule, privsecSectionRule, noHeadinglessSectionsRule);
+
+linter.register(noHttpPropsRule, privsecSectionRule, noHeadinglessSectionsRule, checkPunctuation,
+localRefsExist);
 
 // const cgbg = new Set(["BG-DRAFT", "BG-FINAL", "CG-DRAFT", "CG-FINAL"]);
 const licenses = new Map([

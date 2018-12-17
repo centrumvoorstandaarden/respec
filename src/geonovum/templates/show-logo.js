@@ -1,4 +1,5 @@
-import "deps/hyperhtml";
+import hyperHTML from "../../deps/hyperhtml";
+import { showInlineWarning } from "../../core/utils";
 import { pub } from "core/pubsubhub";
 
 export default obj => {
