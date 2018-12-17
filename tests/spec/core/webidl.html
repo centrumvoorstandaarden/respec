@@ -11,10 +11,10 @@
           ,   shortName:    "webidl"
           ,   editors:      [{ name: "Robin Berjon", url: "http://berjon.com/" }]
           ,   wg:           "ReSpec Hackin' Gang"
-          ,   wgURI:        "http://darobin.github.com/respec"
+          ,   wgURI:        "https://darobin.github.com/respec"
           ,   wgPublicList: "none"
-          ,   wgPatentURI:  "XXX"
-          ,   edDraftURI:   "http://darobin.github.com/respec"
+          ,   wgPatentURI:  "https://example.com/"
+          ,   edDraftURI:   "https://darobin.github.com/respec"
         };
     </script>
   </head>
@@ -589,6 +589,7 @@
       <p id="enum-ref-without-link-for"><a>EnumBasic.one</a> may also be referenced with fully-qualified name.</p>
       <p><dfn data-dfn-for="EnumBasic">white space</dfn></p>
       <section id="enum-empty-sec" data-dfn-for="EmptyEnum">
+        <h2>Enumeration with an empty string</h2>
         <pre class="idl no-link-warnings">
         enum EmptyEnum {
           "",
@@ -670,21 +671,6 @@
       </pre>
     </section>
     <section>
-      <h2>Implements</h2>
-      <p>
-        Basic implements.
-      </p>
-      <pre id='impl-basic' class='idl'>
-        Window implements Breakable;
-      </pre>
-      <p>
-        Less basic implements.
-      </p>
-      <pre id='impl-less-basic' class='idl'>
-        [Something]Window implements Breakable;
-      </pre>
-    </section>
-    <section>
       <h2>Includes</h2>
       <p>
         Basic includes.
@@ -728,6 +714,7 @@
       </p>
     </section>
     <section>
+      <h2>IDL block with arbitrary CSS classes</h2>
       <pre id='retain-css-classes' class='idl a b c overlarge'>
         interface NotTested {};
       </pre>
@@ -787,6 +774,30 @@
           <li><a>doTheFoo()</a>
           <li><a>doTheFoo</a>
         </ol>
+      </section>
+      <section id="idl-dfn-types">
+        <h2>It gives definitions the right idl type</h2>
+        <pre class="idl">
+          interface InterfaceType {
+            readonly attribute DOMString attributeType;
+            void operationType();
+          };
+          dictionary DictionaryType {
+            DOMString fieldType;
+          };
+          enum EnumType {
+            "enumValueType"
+          };
+        </pre>
+        <p>
+          <dfn>InterfaceType</dfn>
+          <dfn data-dfn-for="InterfaceType">attributeType</dfn>
+          <dfn data-dfn-for="InterfaceType">operationType</dfn>
+          <dfn>DictionaryType</dfn>
+          <dfn data-dfn-for="DictionaryType">fieldType</dfn>
+          <dfn>EnumType</dfn>
+          <dfn data-dfn-for="EnumType">enumValueType</dfn>
+        </p>
       </section>
   </body>
 </html>
