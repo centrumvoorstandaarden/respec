@@ -292,7 +292,7 @@ en de verwijzing zelf:
 ### verwijzing naar hoofdstuk of paragraaf
 Je kunt een klikbare link naar een hoofdstuk of paragraaf uit je document maken door:
 - de tekst die je zichtbaar als link tekst wilt hebben tussen blokhaken te zetten, en daarachter
-- tusse haakjes en achter een # teken de titel van het hoofdstuk of paragraaf waar je heen wilt linken, zonder hoofdletters en met streepjes in plaats van spaties.
+- tussen haakjes en achter een # teken de titel van het hoofdstuk of paragraaf waar je heen wilt linken, zonder hoofdletters en met streepjes in plaats van spaties.
 
 Code:
 ```
