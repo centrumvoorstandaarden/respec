@@ -241,4 +241,5 @@ function updateEmptyAnchors(secMap) {
       }
       anchor.append(hyperHTML`<span class='sec-title'>${title.trim()}</span>`);
     });
+
 }

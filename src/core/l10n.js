@@ -21,6 +21,7 @@ const base = {
   abstract: "Abstract",
   author: "Author:",
   authors: "Authors:",
+  back_to_top: "Back to Top",
   bug_tracker: "Bug tracker:",
   back_to_top: "Back to Top",
   close_parens: ")",
