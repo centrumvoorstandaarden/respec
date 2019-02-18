@@ -34,13 +34,14 @@ require.config({
     // WebIDL is not needed for Geonovum
     // webidl2: "deps/webidl2",
   },
-  deps: ["deps/hyperhtml", "geonovum/deps/leaflet"],
+  // deps: ["deps/hyperhtml", "geonovum/deps/leaflet"],
+  deps: ["geonovum/deps/leaflet"],
 });
 
 define(
   [
     // order is significant
-    "./deps/domReady",
+    // "./deps/domReady",
     "./core/base-runner",
     "./core/ui",
     "./core/reindent",
@@ -97,26 +98,24 @@ define(
     "./core/algorithms",
     /*Linter must be the last thing to run*/
     "./core/linter",
-  ],
-  // Thijs: TODO: why is there a difference in the W3C function and Geonovum function here? domReady usage?
-  function(domReady, runner, ui) {
-    ui = ui.ui;
-    var args = Array.from(arguments).filter(function(item) {
-      return item;
-    });
+  ],(runner, { ui }, ...plugins) => {
     ui.show();
-    domReady(function() {
-      runner
-        .runAll(args)
-        .then(document.respecIsReady)
-        .then(function() {
-          ui.enable();
-        })
-        .catch(function(err) {
-          console.error(err);
-          // even if things go critically bad, we should still try to show the UI
-          ui.enable();
-        });
+    domReady().then(async () => {
+      try {
+        await runner.runAll(plugins);
+        await document.respecIsReady;
+      } catch (err) {
+        console.error(err);
+      } finally {
+        ui.enable();
+      }
     });
+  });
+
+  async function domReady() {
+    if (document.readyState === "loading") {
+      await new Promise(resolve =>
+        document.addEventListener("DOMContentLoaded", resolve)
+      );
+    }
   }
-);

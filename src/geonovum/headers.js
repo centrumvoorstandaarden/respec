@@ -95,7 +95,7 @@ import { concatDate, joinAnd, ISODate } from "../core/utils";
 import hb from "handlebars.runtime";
 import { pub } from "../core/pubsubhub";
 import tmpls from "templates";
-import hyperHTML from "../deps/hyperhtml";
+import hyperHTML from "hyperhtml";
 
 // Thijs Brentjens: customize in the geonovum/templates directory
 import sotdTmpl from "geonovum/templates/sotd";

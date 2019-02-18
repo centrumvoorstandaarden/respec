@@ -11,6 +11,7 @@
 
 import { addId, children, parents, renameElement } from "./utils";
 import hyperHTML from "hyperhtml";
+import { l10n, lang } from "./l10n";
 
 const lowerHeaderTags = ["h2", "h3", "h4", "h5", "h6"];
 const headerTags = ["h1", ...lowerHeaderTags];
@@ -213,7 +214,7 @@ function createTableOfContents(ol, conf) {
     }
   }
 
-  const link = hyperHTML`<p role='navigation' id='back-to-top'><a href='#title'><abbr title='Back to Top'>&uarr;</abbr></a></p>`;
+  const link = hyperHTML`<p role='navigation' id='back-to-top'><a href='#title'><abbr title='${conf.l10n.back_to_top}'>&uarr;</abbr></a></p>`;
   document.body.append(link);
 }
 
@@ -233,7 +234,7 @@ function updateEmptyAnchors(secMap) {
       const { secno, title } = secMap[id];
       anchor.classList.add("sec-ref");
       if (anchor.classList.contains("sectionRef")) {
-        anchor.append("section ");
+        anchor.append(l10n[lang].section);
       }
       if (secno) {
         anchor.append(hyperHTML`<span class='secno'>§ ${secno}</span>`, " ");
