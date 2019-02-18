@@ -1,3 +1,4 @@
+// @ts-check
 // Module core/inlines
 // Process all manners of inline information. These are done together despite it being
 // seemingly a better idea to orthogonalise them. The issue is that processing text nodes
@@ -14,7 +15,7 @@
 //    key word was used.  NOTE: While each member is a counter, at this time
 //    the counter is not used.
 import { getTextNodes, refTypeFromContext, showInlineWarning } from "./utils";
-import hyperHTML from "../deps/hyperhtml";
+import hyperHTML from "hyperhtml";
 import { idlStringToHtml } from "./inline-idl-parser";
 import { pub } from "./pubsubhub";
 export const name = "core/inlines";
@@ -27,7 +28,9 @@ export function run(conf) {
 
   // PRE-PROCESSING
   const abbrMap = new Map();
-  for (const abbr of Array.from(document.querySelectorAll("abbr[title]"))) {
+  /** @type {NodeListOf<HTMLElement>} */
+  const abbrs = document.querySelectorAll("abbr[title]");
+  for (const abbr of abbrs) {
     abbrMap.set(abbr.textContent, abbr.title);
   }
   const aKeys = [...abbrMap.keys()];
@@ -37,12 +40,18 @@ export function run(conf) {
   // PROCESSING
   const txts = getTextNodes(document.body, ["pre"]);
   const rx = new RegExp(
-    "(\\bMUST(?:\\s+NOT)?\\b|\\bSHOULD(?:\\s+NOT)?\\b|\\bSHALL(?:\\s+NOT)?\\b|" +
-    "\\bMAY\\b|\\b(?:NOT\\s+)?REQUIRED\\b|\\b(?:NOT\\s+)?RECOMMENDED\\b|\\bOPTIONAL\\b|" +
-    "(?:{{3}\\s*.*\\s*}{3})|" + // inline IDL references
-      "(?:\\[\\[(?:!|\\\\|\\?)?[A-Za-z0-9\\.-]+\\]\\])" +
-      (abbrRx ? `|${abbrRx}` : "") +
-      ")"
+    `(${[
+      "\\bMUST(?:\\s+NOT)?\\b",
+      "\\bSHOULD(?:\\s+NOT)?\\b",
+      "\\bSHALL(?:\\s+NOT)?\\b",
+      "\\bMAY\\b",
+      "\\b(?:NOT\\s+)?REQUIRED\\b",
+      "\\b(?:NOT\\s+)?RECOMMENDED\\b",
+      "\\bOPTIONAL\\b",
+      "(?:{{3}\\s*.*\\s*}{3})", // inline IDL references,
+      "(?:\\[\\[(?:!|\\\\|\\?)?[A-Za-z0-9\\.-]+\\]\\])",
+      ...(abbrRx ? [abbrRx] : []),
+    ].join("|")})`
   );
   for (const txt of txts) {
     const subtxt = txt.data.split(rx);
@@ -114,7 +123,7 @@ export function run(conf) {
           }
         } else if (abbrMap.has(matched)) {
           // ABBR
-          if (txt.parentNode.tagName === "ABBR")
+          if (txt.parentElement.tagName === "ABBR")
             df.appendChild(document.createTextNode(matched));
           else
             df.appendChild(hyperHTML`

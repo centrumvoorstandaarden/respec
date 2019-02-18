@@ -4,7 +4,7 @@
 
 export const name = "core/id-headers";
 import { addId } from "./utils";
-import hyperHTML from "../deps/hyperhtml";
+import hyperHTML from "hyperhtml";
 
 export function run(conf) {
   document
@@ -28,6 +28,6 @@ function addSectionLink(h) {
   const section = h.closest("section[id]");
   const id = section ? section.id : h.id;
   h.appendChild(hyperHTML`
-    <a href="${"#" + id}" class="self-link" aria-label="§"></a>
+    <a href="${`#${id}`}" class="self-link" aria-label="§"></a>
   `);
 }

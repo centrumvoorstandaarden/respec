@@ -26,7 +26,7 @@ describe("Core - WebIDL", () => {
     expect(sequences.length).toEqual(1);
     const sequence = sequences[0];
 
-    //sequence<DOMString>
+    // sequence<DOMString>
     expect(sequence.nextElementSibling.localName).toEqual("a");
     expect(sequence.nextElementSibling.href.endsWith("#idl-DOMString")).toBe(
       true
@@ -52,8 +52,8 @@ describe("Core - WebIDL", () => {
   });
 
   it("distinguishes between types and identifiers when linking", async () => {
-    const similarlyNamedInterface = doc.querySelector(
-      "#similar-names #idl-def-similarlynamed"
+    const similarlyNamedInterface = doc.getElementById(
+      "idl-def-similarlynamed"
     );
     expect(similarlyNamedInterface).toBeTruthy();
     const [
@@ -176,7 +176,7 @@ describe("Core - WebIDL", () => {
     expect(target.querySelector(".idlID").textContent).toEqual("SuperStar");
 
     target = doc.getElementById("if-extended-attribute");
-    text = "[Something, Constructor()] " + text;
+    text = `[Something, Constructor()] ${text}`;
     expect(target.textContent).toEqual(text);
     const extAttrs = target.querySelectorAll(".extAttr");
     expect(extAttrs[0].textContent).toEqual("Something");
@@ -224,6 +224,10 @@ describe("Core - WebIDL", () => {
     expect(interfaces[1].id).toEqual("idl-def-docisnotcasesensitive");
     expect(interfaces[2].id).toEqual("idl-def-undocinterface");
     expect(interfaces[2].querySelector(".idlID a")).toBeNull();
+    const namespace = target.querySelector(".idlNamespace");
+    expect(namespace.querySelector(".idlID a").getAttribute("href")).toEqual(
+      "#dom-afterglow"
+    );
   });
 
   it("should handle constructors", () => {
@@ -862,7 +866,7 @@ callback CallBack = Z? (X x, optional Y y, /*trivia*/ optional Z z);
     expect(target.getElementsByClassName("idlIncludes").length).toEqual(1);
 
     target = doc.getElementById("incl-less-basic");
-    text = "[Something]" + text;
+    text = `[Something]${text}`;
     expect(target.textContent).toEqual(text);
   });
 
@@ -963,38 +967,32 @@ callback CallBack = Z? (X x, optional Y y, /*trivia*/ optional Z z);
     expect(linkToBarBarAttr.length).toBe(2);
   });
   it("sets the IDL type for each type of IDL token", () => {
-    const section = doc.getElementById("idl-dfn-types");
-
-    //interface InterfaceType
-    const interfaceType = section.querySelector("#dom-interfacetype");
+    // interface InterfaceType
+    const interfaceType = doc.getElementById("dom-interfacetype");
     expect(interfaceType.dataset.idl).toBe("interface");
 
     // attribute attributeType;
-    const attributeType = section.querySelector(
-      "#dom-interfacetype-attributetype"
-    );
+    const attributeType = doc.getElementById("dom-interfacetype-attributetype");
     expect(attributeType.dataset.idl).toBe("attribute");
 
     // operationType();
-    const operationType = section.querySelector(
-      "#dom-interfacetype-operationtype"
-    );
+    const operationType = doc.getElementById("dom-interfacetype-operationtype");
     expect(operationType.dataset.idl).toBe("operation");
 
     // DictionaryType
-    const dictionaryType = section.querySelector("#dom-dictionarytype");
+    const dictionaryType = doc.getElementById("dom-dictionarytype");
     expect(dictionaryType.dataset.idl).toBe("dictionary");
 
     // fieldType member (field)
-    const fieldType = section.querySelector("#dom-dictionarytype-fieldtype");
+    const fieldType = doc.getElementById("dom-dictionarytype-fieldtype");
     expect(fieldType.dataset.idl).toBe("field");
 
     // enum EnumType
-    const enumType = section.querySelector("#dom-enumtype");
+    const enumType = doc.getElementById("dom-enumtype");
     expect(enumType.dataset.idl).toBe("enum");
 
     // "enumValueType"
-    const enumValueType = section.querySelector("#dom-enumtype-enumvaluetype");
+    const enumValueType = doc.getElementById("dom-enumtype-enumvaluetype");
     expect(enumValueType.dataset.idl).toBe("enum-value");
   });
 });

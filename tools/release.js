@@ -10,7 +10,7 @@ const path = require("path");
 const MAIN_BRANCH = "develop";
 const DEBUG = false;
 
-//See: https://github.com/w3c/respec/issues/645
+// See: https://github.com/w3c/respec/issues/645
 require("epipebomb")();
 
 const loadOps = {
@@ -245,7 +245,7 @@ const Prompts = {
     pack.version = await this.askQuestion(promptOps);
     await fsp.writeFile(
       packagePath,
-      JSON.stringify(pack, null, 2) + "\n",
+      `${JSON.stringify(pack, null, 2)}\n`,
       "utf8"
     );
     return pack.version;

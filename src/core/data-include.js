@@ -1,4 +1,4 @@
-/*globals console*/
+/* globals console */
 // Module core/data-include
 // Support for the data-include attribute. Causes external content to be included inside an
 // element that has data-include='some URI'. There is also a data-oninclude attribute that
@@ -68,7 +68,7 @@ export async function run() {
     if (!url) {
       return; // just skip it
     }
-    const id = "include-" + String(Math.random()).substr(2);
+    const id = `include-${String(Math.random()).substr(2)}`;
     el.dataset.includeId = id;
     try {
       const response = await fetch(url);

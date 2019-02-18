@@ -41,7 +41,7 @@
  *     </section>
  *
  * The whitespace of pre elements are left alone.
- **/
+ */
 
 import { markdownToHtml } from "./utils";
 export const name = "core/markdown";
@@ -107,7 +107,7 @@ class Builder {
     node.appendChild(process(node));
 
     if (header) {
-      node.insertBefore(header, node.firstChild);
+      node.prepend(header);
     }
 
     parent.appendChild(node);

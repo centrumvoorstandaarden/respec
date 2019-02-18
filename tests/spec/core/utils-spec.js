@@ -17,7 +17,7 @@ describe("Core - Utils", () => {
     }
     beforeEach(clearCaches);
     it("caches a requests of different type with a 1 day default", async () => {
-      const url = location.origin + "/tests/data/pass.txt";
+      const url = `${location.origin}/tests/data/pass.txt`;
       const requests = [url, new URL(url), new Request(url)];
       for (const request of requests) {
         expect(await caches.match(request)).toBe(undefined);
@@ -40,13 +40,13 @@ describe("Core - Utils", () => {
 
     it("uses the origin as the cache key", async () => {
       expect(await caches.keys()).toEqual([]);
-      const url = location.origin + "/tests/data/pass.txt";
+      const url = `${location.origin}/tests/data/pass.txt`;
       await utils.fetchAndCache(url);
       expect(await caches.keys()).toEqual([location.origin]);
     });
 
     it("returns a cached response when the response is not ok", async () => {
-      const url = location.origin + "/bad-request";
+      const url = `${location.origin}/bad-request`;
       const cache = await caches.open(location.origin);
       const goodResponse = new Response("PASS");
       await cache.put(url, goodResponse);
@@ -56,7 +56,7 @@ describe("Core - Utils", () => {
     });
 
     it("returns a fresh network response when the cached response is expired", async () => {
-      const url = location.origin + "/tests/data/pass.txt";
+      const url = `${location.origin}/tests/data/pass.txt`;
       const cache = await caches.open(location.origin);
       const yesterday = Date.now() - 86400000;
       const expiredResponse = new Response("FAIL", {
@@ -71,7 +71,7 @@ describe("Core - Utils", () => {
     });
 
     it("allows overriding the default cache time", async () => {
-      const url = location.origin + "/tests/data/pass.txt";
+      const url = `${location.origin}/tests/data/pass.txt`;
       const cachedResponse = await utils.fetchAndCache(url, 0);
       expect(cachedResponse.headers.has("Expires")).toBe(true);
       const cacheTime = new Date(
@@ -255,46 +255,6 @@ describe("Core - Utils", () => {
     });
   });
 
-  describe("makeOwnerSwapper()", () => {
-    it("returns a function", () => {
-      const testNode = document.createTextNode("test");
-      const testFunction = utils.makeOwnerSwapper(testNode);
-      expect(testFunction instanceof Function).toBe(true);
-    });
-
-    it("removes the original node from the its owner document", () => {
-      const testNode = document.createTextNode("test");
-      const swapTestNode = utils.makeOwnerSwapper(testNode);
-      const newDoc = document.implementation.createHTMLDocument("test");
-      document.body.appendChild(testNode);
-      expect(document.body.contains(testNode)).toBe(true);
-      swapTestNode(newDoc.body);
-      expect(document.body.contains(testNode)).toBe(false);
-      expect(testNode.ownerDocument).toEqual(newDoc);
-    });
-
-    it("appends the node into a new document", () => {
-      const testNode = document.createElement("link");
-      const swapTestNode = utils.makeOwnerSwapper(testNode);
-      const newDoc = document.implementation.createHTMLDocument("test");
-      expect(document.head.contains(testNode)).toBe(false);
-      swapTestNode(newDoc.head);
-      expect(newDoc.head.contains(testNode)).toBe(true);
-      expect(testNode.ownerDocument).toEqual(newDoc);
-    });
-
-    it("prepends the node into a new document at the right place", () => {
-      const testNode = document.createElement("link");
-      const swapTestNode = utils.makeOwnerSwapper(testNode);
-      const newDoc = document.implementation.createHTMLDocument("test");
-      const metaElem = newDoc.createElement("meta");
-      newDoc.head.appendChild(metaElem);
-      swapTestNode(newDoc.head);
-      expect(newDoc.head.firstChild).toEqual(testNode);
-      expect(newDoc.head.lastChild).toEqual(metaElem);
-    });
-  });
-
   describe("normalizePadding() method", () => {
     it("throws given an argument that is not a string", () => {
       expect(() => {
@@ -330,14 +290,16 @@ describe("Core - Utils", () => {
   describe("linkCSS", () => {
     it("adds a link element", () => {
       utils.linkCSS(document, "BOGUS");
-      expect($("link[href='BOGUS']").length).toEqual(1);
-      $("link[href='BOGUS']").remove();
+      expect(document.querySelectorAll("link[href='BOGUS']").length).toEqual(1);
+      document.querySelector("link[href='BOGUS']").remove();
     });
 
     it("adds several link elements", () => {
       utils.linkCSS(document, ["BOGUS", "BOGUS", "BOGUS"]);
-      expect($("link[href='BOGUS']").length).toEqual(3);
-      $("link[href='BOGUS']").remove();
+      expect(document.querySelectorAll("link[href='BOGUS']").length).toEqual(3);
+      document
+        .querySelectorAll("link[href='BOGUS']")
+        .forEach(element => element.remove());
     });
   });
 

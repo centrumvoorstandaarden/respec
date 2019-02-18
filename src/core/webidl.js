@@ -4,12 +4,13 @@
 // TODO:
 //  - It could be useful to report parsed IDL items as events
 //  - don't use generated content in the CSS!
-import { flatten, normalizePadding, reindent } from "./utils";
-import css from "../deps/text!core/css/webidl.css";
+import { flatten, normalizePadding } from "./utils";
+import css from "text!../../assets/webidl.css";
 import { findDfn } from "./dfn-finder";
-import hyperHTML from "../deps/hyperhtml";
+import hyperHTML from "hyperhtml";
 import { pub } from "./pubsubhub";
-import webidl2 from "../deps/webidl2";
+import { registerDefinition } from "./dfn-map";
+import webidl2 from "webidl2";
 import webidl2writer from "../deps/webidl2writer";
 
 export const name = "core/webidl";
@@ -89,7 +90,7 @@ const operationNames = {};
 const idlPartials = {};
 
 // Takes the result of WebIDL2.parse(), an array of definitions.
-function makeMarkup(parse, definitionMap, { suppressWarnings } = {}) {
+function makeMarkup(parse, { suppressWarnings } = {}) {
   const templates = {
     wrap(items) {
       return items
@@ -116,7 +117,7 @@ function makeMarkup(parse, definitionMap, { suppressWarnings } = {}) {
       }
       const parentName = parent ? parent.name : "";
       const { name } = getNameAndId(data, parentName);
-      const dfn = findDfn(data, name, definitionMap, {
+      const dfn = findDfn(data, name, {
         parent: parentName,
         suppressWarnings,
       });
@@ -236,12 +237,12 @@ function resolvePartial(defn) {
     idlPartials[defn.name] = 0;
   }
   idlPartials[defn.name] += 1;
-  return "-partial-" + idlPartials[defn.name];
+  return `-partial-${idlPartials[defn.name]}`;
 }
 
 function resolveOverload(name, parentName) {
-  const qualifiedName = parentName + "." + name;
-  const fullyQualifiedName = qualifiedName + "()";
+  const qualifiedName = `${parentName}.${name}`;
+  const fullyQualifiedName = `${qualifiedName}()`;
   let overload;
   if (!operationNames[fullyQualifiedName]) {
     operationNames[fullyQualifiedName] = 0;
@@ -249,7 +250,7 @@ function resolveOverload(name, parentName) {
   if (!operationNames[qualifiedName]) {
     operationNames[qualifiedName] = 0;
   } else {
-    overload = "!overload-" + operationNames[qualifiedName];
+    overload = `!overload-${operationNames[qualifiedName]}`;
   }
   operationNames[fullyQualifiedName] += 1;
   operationNames[qualifiedName] += 1;
@@ -274,7 +275,7 @@ function getDefnName(defn) {
   return "";
 }
 
-export function run(conf) {
+export function run() {
   const idls = document.querySelectorAll("pre.idl");
   if (!idls.length) {
     return;
@@ -284,15 +285,14 @@ export function run(conf) {
     if (link) {
       const style = document.createElement("style");
       style.textContent = css;
-      link.parentElement.insertBefore(style, link);
+      link.before(style);
     }
   }
 
   idls.forEach(idlElement => {
     let parse;
     try {
-      const idl = reindent(idlElement.textContent);
-      parse = webidl2.parse(idl);
+      parse = webidl2.parse(idlElement.textContent);
     } catch (e) {
       pub(
         "error",
@@ -304,8 +304,7 @@ export function run(conf) {
       // Skip this <pre> and move on to the next one.
       return;
     }
-    // linkDefinitions(parse, conf.definitionMap, "", idlElement);
-    const newElement = makeMarkup(parse, conf.definitionMap, {
+    const newElement = makeMarkup(parse, {
       suppressWarnings: idlElement.classList.contains("no-link-warnings"),
     });
     if (idlElement.id) newElement.id = idlElement.id;
@@ -316,10 +315,7 @@ export function run(conf) {
       if (parent) {
         elem.dataset.dfnFor = parent.dataset.title.toLowerCase();
       }
-      if (!conf.definitionMap[title]) {
-        conf.definitionMap[title] = [];
-      }
-      conf.definitionMap[title].push(elem);
+      registerDefinition(elem, [title]);
     });
     idlElement.replaceWith(newElement);
     newElement.classList.add(...idlElement.classList);

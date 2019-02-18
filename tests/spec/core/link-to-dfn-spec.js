@@ -4,7 +4,7 @@ describe("Core — Link to definitions", () => {
 
   it("removes non-alphanum chars from fragment components", async () => {
     const bodyText = `
-      <section">
+      <section>
         <h2>Test section</h2>
         <p><dfn>[[\\test]]</dfn><a id="testAnchor">[[\\test]]</a>
       </section>`;
@@ -75,5 +75,60 @@ describe("Core — Link to definitions", () => {
     expect(dfn3).toBeTruthy();
     expect(dfn3.classList).toContain("respec-offending-element");
     expect(dfn3.title).toBe("test1");
+  });
+
+  it("should not have data-dfn-for if not an IDL definition", async () => {
+    const bodyText = `
+      <section>
+        <h2>Test Section</h2>
+        <dfn data-dfn-for="Foo">Test1</dfn>
+      </section>`;
+    const ops = {
+      config: makeBasicConfig(),
+      body: makeDefaultBody() + bodyText,
+    };
+    const doc = await makeRSDoc(ops);
+    const [dfn] = doc.getElementsByTagName("dfn");
+    expect(dfn.dataset.dfnFor).toBeUndefined();
+  });
+
+  it("should get ID from the first match", async () => {
+    const bodyText = `
+      <section>
+        <h2>Test Section</h2>
+        <dfn data-lt="Test2">Test1</dfn>
+        <a>Test2</a>
+        <a>Test1</a>
+      </section>`;
+    const ops = {
+      config: makeBasicConfig(),
+      body: makeDefaultBody() + bodyText,
+    };
+    const doc = await makeRSDoc(ops);
+    const [dfn] = doc.getElementsByTagName("dfn");
+    expect(dfn.id).toBe("dfn-test2");
+  });
+
+  it("prefers data-lt over text content", async () => {
+    const bodyText = `
+      <section>
+        <h2>Test Section</h2>
+        <pre class="idl">
+          interface Presentation {};
+        </pre>
+        <dfn>Foo</dfn>
+        <dfn>Bar</dfn>
+        <a id="testFoo" data-lt="Foo">Presentation</a>
+        <a id="testBar" data-lt="Bar">Foo</a>
+      </section>`;
+    const ops = {
+      config: makeBasicConfig(),
+      body: makeDefaultBody() + bodyText,
+    };
+    const doc = await makeRSDoc(ops);
+    const testFoo = doc.getElementById("testFoo");
+    const testBar = doc.getElementById("testBar");
+    expect(testFoo.hash).toBe("#dfn-foo");
+    expect(testBar.hash).toBe("#dfn-bar");
   });
 });
