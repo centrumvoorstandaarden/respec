@@ -15,6 +15,7 @@ let lastNonAppendix = 0;
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 export const name = "core/structure";
 import { addId } from "./utils";
+import { l10n, lang } from "./l10n";
 
 function makeTOCAtLevel($parent, doc, current, level, conf) {
   const $secs = $parent.children(
@@ -154,7 +155,8 @@ export function run(conf) {
     }
 
     const $link = $(
-      "<p role='navigation' id='back-to-top'><a href='#title'><abbr title='Back to Top'>&uarr;</abbr></a></p>"
+      // Thijs Brentjens Geonovum: localize title
+      "<p role='navigation' id='back-to-top'><a href='#title'><abbr title='" + l10n[lang].back_to_top + "'>&uarr;</abbr></a></p>"
     );
     $("body").append($link);
   }
@@ -166,7 +168,8 @@ export function run(conf) {
     const id = $a.attr("href").slice(1);
     if (secMap[id]) {
       $a.addClass("sec-ref");
-      $a.html(($a.hasClass("sectionRef") ? "section " : "") + secMap[id]);
+      // Thijs Brentjens Geonovum: workaround for https://github.com/Geonovum/respec/issues/164 (and waiting for W3C fix localization)
+      $a.html(($a.hasClass("sectionRef") ? l10n[lang].section : "") + secMap[id]);
     }
   });
 }
