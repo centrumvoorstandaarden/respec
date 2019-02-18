@@ -92,14 +92,14 @@
 //      - "w3c-software-doc", the W3C Software and Document License
 //            https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document
 import { concatDate, joinAnd, ISODate } from "../core/utils";
-import hb from "handlebars.runtime";
+// import hb from "handlebars.runtime";
 import { pub } from "../core/pubsubhub";
-import tmpls from "templates";
+// import tmpls from "templates";
 import hyperHTML from "hyperhtml";
 
 // Thijs Brentjens: customize in the geonovum/templates directory
-import sotdTmpl from "geonovum/templates/sotd";
-import headersTmpl from "geonovum/templates/headers";
+import sotdTmpl from "./templates/sotd";
+import headersTmpl from "./templates/headers";
 
 export const name = "geonovum/headers";
 

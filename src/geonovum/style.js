@@ -110,23 +110,9 @@ function createResourceHints() {
     }, document.createDocumentFragment());
   return resourceHints;
 }
-// Collect elements for insertion (document fragment)
-const elements = createResourceHints();
 
-if (document.body.querySelector("figure.scalable")) {
-  // Apply leaflet style if class scalable is present
-  elements.appendChild(createStyle("leaflet"));
-  elements.appendChild(createStyle("font-awesome"));
-}
 
-// Opportunistically apply base style
-// elements.appendChild(createBaseStyle());
-if (!document.head.querySelector("meta[name=viewport]")) {
-  // Make meta viewport the first element in the head.
-  elements.insertBefore(createMetaViewport(), elements.firstChild);
-}
 
-document.head.insertBefore(elements, document.head.firstChild);
 
 export function run(conf, doc, cb) {
   if (!conf.specStatus) {
@@ -171,5 +157,25 @@ export function run(conf, doc, cb) {
   linkCSS(doc, finalStyleURL);
   const head = doc.querySelector("head");
   head.appendChild(favicon);
+
+
+  // Collect elements for insertion (document fragment)
+  const elements = createResourceHints();
+
+  if (document.body.querySelector("figure.scalable")) {
+    // Apply leaflet style if class scalable is present
+    elements.appendChild(createStyle("leaflet"));
+    elements.appendChild(createStyle("font-awesome"));
+  }
+
+  // Opportunistically apply base style
+  // elements.appendChild(createBaseStyle());
+  if (!document.head.querySelector("meta[name=viewport]")) {
+    // Make meta viewport the first element in the head.
+    elements.insertBefore(createMetaViewport(), elements.firstChild);
+  }
+
+  document.head.insertBefore(elements, document.head.firstChild);
+
   cb();
 }

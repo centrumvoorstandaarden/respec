@@ -31,6 +31,8 @@ require.config({
     marked: "deps/marked",
     pluralize: "deps/pluralize",
     text: "deps/text",
+    leaflet: "geonovum/deps/leaflet",
+    "leaflet-easybutton": "geonovum/deps/easy-button",
     // WebIDL is not needed for Geonovum
     // webidl2: "deps/webidl2",
   },
@@ -59,7 +61,9 @@ define(
     "./geonovum/abstract",
     "./geonovum/conformance",
     "./core/data-transform",
-    "./core/inlines",
+    // Thijs Brentjens Geonovum: use geonovum customized inlines, for RFC2119 in Dutch
+    // "./core/inlines",
+    "./geonovum/inlines",
     "./core/dfn",
     "./core/pluralize",
     // Thijs: TODO: check rfc2119: why is this not used in Geonovum profile?
@@ -79,7 +83,7 @@ define(
     "./core/fix-headers",
     "./core/structure",
     "./geonovum/informative", // TODO: check: voor een niet normatieve tekst is een apart script opgenomen. Is dit nog nodig? Of naar i10n vertalen?
-    "./geonovum/permalinks", // TODO: check wat die nu nog precies doet, kan nodig zijn dat dit custom Geonovum is
+    // "./geonovum/permalinks", // TODO: check wat die nu nog precies doet, kan nodig zijn dat dit custom Geonovum is
     "./core/id-headers",
     "./core/caniuse",
     // "w3c/aria",

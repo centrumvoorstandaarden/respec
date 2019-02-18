@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * Checks that there is a section that has at least privacy and/or
  * security and considerations.
@@ -6,8 +7,8 @@
  * case-insensitive, multi-line check.
  *
  */
-import LinterRule from "core/LinterRule";
-import { lang as defaultLang } from "../l10n";
+import LinterRule from "../../core/LinterRule";
+import { lang as defaultLang } from "../../core/l10n";
 const name = "privsec-section";
 const meta = {
   en: {
@@ -23,21 +24,24 @@ const meta = {
 const lang = defaultLang in meta ? defaultLang : "en";
 
 function hasPriSecConsiderations(doc) {
-  return Array.from(
-    doc.querySelectorAll("h2, h3, h4, h5, h6")
-  ).some(({ textContent: text }) => {
-    const saysPrivOrSec = /(privacy|security)/im.test(text);
-    const saysConsiderations = /(considerations)/im.test(text);
-    return (saysPrivOrSec && saysConsiderations) || saysPrivOrSec;
-  });
+  return Array.from(doc.querySelectorAll("h2, h3, h4, h5, h6")).some(
+    ({ textContent: text }) => {
+      const saysPrivOrSec = /(privacy|security)/im.test(text);
+      const saysConsiderations = /(considerations)/im.test(text);
+      return (saysPrivOrSec && saysConsiderations) || saysPrivOrSec;
+    }
+  );
 }
 
+/**
+ * @param {*} conf
+ * @param {Document} doc
+ * @return {import("../../core/LinterRule").LinterResult}
+ */
 function lintingFunction(conf, doc) {
-  const results = [];
   if (conf.isRecTrack && !hasPriSecConsiderations(doc)) {
-    results.push({ name, occurrences: 1, ...meta[lang] });
+    return { name, occurrences: 1, ...meta[lang] };
   }
-  return results;
 }
 
 export const rule = new LinterRule(name, lintingFunction);
