@@ -1,6 +1,6 @@
-import hyperHTML from "../../deps/hyperhtml";
+import hyperHTML from "hyperhtml";
 import { showInlineWarning } from "../../core/utils";
-import { pub } from "core/pubsubhub";
+import { pub } from "../../core/pubsubhub";
 
 export default obj => {
   const a = document.createElement("a");

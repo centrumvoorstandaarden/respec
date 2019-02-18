@@ -1,4 +1,4 @@
-import hyperHTML from "../../deps/hyperhtml";
+import hyperHTML from "hyperhtml";
 
 // Thijs Brentjens: changed statusses and texts for the Geonovum specTypes
 export default conf => {

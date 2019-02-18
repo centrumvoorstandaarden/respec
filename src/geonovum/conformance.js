@@ -1,6 +1,6 @@
 // Module w3c/conformance
 // Handle the conformance section properly.
-import confoTmpl from "geonovum/templates/conformance";
+import confoTmpl from "./templates/conformance";
 import { pub } from "../core/pubsubhub";
 
 export const name = "geonovum/conformance";

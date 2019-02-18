@@ -7,7 +7,7 @@
  * It's a standalone module that can be imported into other modules.
  *
  */
-/*globals IDBKeyRange, DOMException, console */
+/* globals IDBKeyRange, DOMException */
 import { pub } from "./pubsubhub";
 export const name = "core/biblio-db";
 
@@ -89,7 +89,7 @@ export const biblioDB = {
    */
   async has(type, id) {
     if (!ALLOWED_TYPES.has(type)) {
-      throw new TypeError("Invalid type: " + type);
+      throw new TypeError(`Invalid type: ${type}`);
     }
     if (!id) {
       throw new TypeError("id is required");
@@ -169,7 +169,7 @@ export const biblioDB = {
    */
   async get(type, id) {
     if (!ALLOWED_TYPES.has(type)) {
-      throw new TypeError("Invalid type: " + type);
+      throw new TypeError(`Invalid type: ${type}`);
     }
     if (!id) {
       throw new TypeError("id is required");
@@ -241,7 +241,7 @@ export const biblioDB = {
    */
   async add(type, details) {
     if (!ALLOWED_TYPES.has(type)) {
-      throw new TypeError("Invalid type: " + type);
+      throw new TypeError(`Invalid type: ${type}`);
     }
     if (typeof details !== "object") {
       throw new TypeError("details should be an object");

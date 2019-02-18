@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * Module core/data-cite
  *
@@ -15,7 +16,7 @@
  */
 import { refTypeFromContext, showInlineWarning, wrapInner } from "./utils";
 import { resolveRef, updateFromNetwork } from "./biblio";
-import hyperHTML from "../deps/hyperhtml";
+import hyperHTML from "hyperhtml";
 export const name = "core/data-cite";
 
 function requestLookup(conf) {
@@ -24,8 +25,13 @@ function requestLookup(conf) {
     const originalKey = elem.dataset.cite;
     const { key, frag, path } = toCiteDetails(elem);
     let href = "";
+    let title = "";
     // This is just referring to this document
     if (key.toLowerCase() === conf.shortName.toLowerCase()) {
+      console.log(
+        elem,
+        `The reference "${key}" is resolved into the current document per \`conf.shortName\`.`
+      );
       href = document.location.href;
     } else {
       // Let's go look it up in spec ref...
@@ -36,6 +42,7 @@ function requestLookup(conf) {
         return;
       }
       href = entry.href;
+      title = entry.title;
     }
     if (path) {
       // See: https://github.com/w3c/respec/issues/1856#issuecomment-429579475
@@ -47,11 +54,20 @@ function requestLookup(conf) {
     }
     switch (elem.localName) {
       case "a": {
+        if (elem.textContent === "") {
+          elem.textContent = title;
+        }
         elem.href = href;
         break;
       }
       case "dfn": {
-        wrapInner(elem, hyperHTML`<a href="${href}"></a>`);
+        const anchor = hyperHTML`<a href="${href}">`;
+        if (!elem.textContent) {
+          anchor.textContent = title;
+          elem.append(anchor);
+        } else {
+          wrapInner(elem, anchor);
+        }
         break;
       }
     }
@@ -90,7 +106,7 @@ function citeDetailsConverter(conf) {
       dataset.citeFrag = rawKey.replace("#", ""); // the key is acting as fragment
       return toCiteDetails(elem);
     }
-    const frag = citeFrag ? "#" + citeFrag : findFrag(rawKey);
+    const frag = citeFrag ? `#${citeFrag}` : findFrag(rawKey);
     const path = citePath || findPath(rawKey).split("#")[0]; // path is always before "#"
     const { type } = refTypeFromContext(rawKey, elem);
     const isNormative = type === "normative";
@@ -103,7 +119,9 @@ function citeDetailsConverter(conf) {
 
 export async function run(conf) {
   const toCiteDetails = citeDetailsConverter(conf);
-  Array.from(document.querySelectorAll(["dfn[data-cite], a[data-cite]"]))
+  /** @type {NodeListOf<HTMLElement>} */
+  const cites = document.querySelectorAll("dfn[data-cite], a[data-cite]");
+  Array.from(cites)
     .filter(el => el.dataset.cite)
     .map(toCiteDetails)
     // it's not the same spec
@@ -143,6 +161,6 @@ export async function linkInlineCitations(doc, conf = respecConfig) {
   const newEntries = await updateFromNetwork(missingBibEntries);
   Object.assign(conf.biblio, newEntries);
 
-  const lookupRequests = elems.map(toLookupRequest);
+  const lookupRequests = [...new Set(elems)].map(toLookupRequest);
   return await Promise.all(lookupRequests);
 }

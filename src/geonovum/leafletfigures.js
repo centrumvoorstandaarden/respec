@@ -2,9 +2,10 @@
  * Module: geonovum/leafletfigures
  * Makes figures scalable via zoom and pan function
  */
-import L from "geonovum/deps/leaflet";
-import easyButton from "geonovum/deps/easy-button";
-import { sub } from "core/pubsubhub";
+
+import L from "../geonovum/deps/leaflet";
+import easyButton from "../geonovum/deps/easy-button";
+import { sub } from "../core/pubsubhub";
 
 export const name = "geonovum/leafletfigures";
 

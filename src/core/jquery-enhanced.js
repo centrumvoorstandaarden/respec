@@ -1,4 +1,3 @@
-import "../deps/jquery";
 import {
   addId,
   getDfnTitles,
@@ -6,10 +5,11 @@ import {
   getTextNodes,
   renameElement,
 } from "./utils";
+import $ from "jquery";
 
 export const name = "core/jquery-enhanced";
 
-window.$ = $;
+window.$ = window.jQuery = $;
 
 // --- JQUERY EXTRAS -----------------------------------------------------------------------
 // Applies to any jQuery object containing elements, changes their name to the one give, and

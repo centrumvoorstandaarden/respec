@@ -4,9 +4,7 @@ describe("Core - Figures", () => {
   it("creates autolinks from the anchor to the figure", async () => {
     const ops = {
       config: makeBasicConfig(),
-      body:
-        makeDefaultBody() +
-        `<figure id='fig'> <img src='img' alt=''>
+      body: `${makeDefaultBody()}<figure id='fig'> <img src='img' alt=''>
         <figcaption>test figure caption</figcaption>
        </figure>
        <a id='anchor-fig-title-empty' title='' href='#fig'></a>
@@ -34,9 +32,7 @@ describe("Core - Figures", () => {
       htmlAttrs: {
         lang: "ja",
       },
-      body:
-        makeDefaultBody() +
-        `<figure id='fig'> <img src='img' alt=''>
+      body: `${makeDefaultBody()}<figure id='fig'> <img src='img' alt=''>
         <figcaption>漢字と仮名のサイズの示し方</figcaption>
        </figure>
        <a id='anchor-fig' href='#fig'></a>`,
@@ -50,9 +46,7 @@ describe("Core - Figures", () => {
   it("generates table of figures", async () => {
     const ops = {
       config: makeBasicConfig(),
-      body:
-        makeDefaultBody() +
-        `<figure>
+      body: `${makeDefaultBody()}<figure>
           <img src='img' alt=''>
           <figcaption>test 1</figcaption>
         </figure>
@@ -67,6 +61,7 @@ describe("Core - Figures", () => {
     const tofHeader = tof.querySelector("h2");
     const tofItems = tof.querySelectorAll("ul li");
     const figLinks = tof.querySelectorAll("ul li a");
+    expect(tof.querySelector("figcaption")).toBeNull();
     expect(tofHeader).toBeTruthy();
     expect(tofHeader.textContent).toEqual("1. Table of Figures");
     expect(tofItems.length).toEqual(2);
@@ -80,8 +75,7 @@ describe("Core - Figures", () => {
       htmlAttrs: {
         lang: "ja",
       },
-      body:
-        makeDefaultBody() + `<figure id='fig'><img src='img' alt=''></figure>`,
+      body: `${makeDefaultBody()}<figure id='fig'><img src='img' alt=''></figure>`,
     };
     const doc = await makeRSDoc(ops);
     const anchorFig = doc.getElementById("fig");
