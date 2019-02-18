@@ -1,5 +1,5 @@
-import "deps/hyperhtml";
-import { pub } from "core/pubsubhub";
+import hyperHTML from "../../deps/hyperhtml";
+import { pub } from "../../core/pubsubhub";
 const html = hyperHTML;
 
 export default link => {
@@ -22,8 +22,8 @@ function showLinkData(data) {
       ${
         data.href
           ? html`
-        <a href="${data.href}">${data.value || data.href}</a>
-      `
+              <a href="${data.href}">${data.value || data.href}</a>
+            `
           : ""
       }
     </dd>

@@ -1,6 +1,6 @@
-import "deps/hyperhtml";
+import hyperHTML from "../../deps/hyperhtml";
 
-// Thijs Brentjens: changed statusses and texts for the Goenovum specTypes
+// Thijs Brentjens: changed statusses and texts for the Geonovum specTypes
 export default conf => {
   const html = hyperHTML;
   // handle the emailComments configuration

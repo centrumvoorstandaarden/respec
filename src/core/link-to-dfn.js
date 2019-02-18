@@ -1,11 +1,17 @@
 // Module core/link-to-dfn
 // Gives definitions in conf.definitionMap IDs and links <a> tags
 // to the matching definitions.
-import { linkInlineCitations } from "core/data-cite";
-import { pub } from "core/pubsubhub";
+import {
+  addId,
+  getLinkTargets,
+  showInlineError,
+  showInlineWarning,
+  wrapInner,
+} from "./utils";
+import { run as addExternalReferences } from "./xref";
 import { lang as defaultLang } from "./l10n";
-import { getLinkTargets } from "core/utils";
-import { run as addExternalReferences } from "core/xref";
+import { linkInlineCitations } from "./data-cite";
+import { pub } from "./pubsubhub";
 export const name = "core/link-to-dfn";
 const l10n = {
   en: {
@@ -14,57 +20,47 @@ const l10n = {
 };
 const lang = defaultLang in l10n ? defaultLang : "en";
 
-export async function run(conf, doc, cb) {
-  doc.normalize();
+export async function run(conf) {
+  document.normalize();
   const titles = {};
   Object.keys(conf.definitionMap).forEach(title => {
     titles[title] = {};
     const listOfDuplicateDfns = [];
     conf.definitionMap[title].forEach(dfn => {
-      if (dfn.attr("data-idl") === undefined) {
+      if (dfn.dataset.idl === undefined) {
         // Non-IDL definitions aren't "for" an interface.
-        dfn.removeAttr("data-dfn-for");
+        delete dfn.dataset.dfnFor;
       }
-      const dfn_for = dfn.attr("data-dfn-for") || "";
-      if (dfn_for in titles[title]) {
+      const { dfnFor = "" } = dfn.dataset;
+      if (dfnFor in titles[title]) {
         // We want <dfn> definitions to take precedence over
         // definitions from WebIDL. WebIDL definitions wind
         // up as <span>s instead of <dfn>.
-        const oldIsDfn = titles[title][dfn_for].filter("dfn").length !== 0;
-        const newIsDfn = dfn.filter("dfn").length !== 0;
-        if (oldIsDfn && newIsDfn) {
-          // Only complain if the user provides 2 <dfn>s
-          // for the same term.
-          dfn.addClass("respec-offending-element");
-          if (dfn.attr("title") === undefined) {
-            dfn.attr("title", l10n[lang].duplicate);
-          }
-          if (dfn.attr("id") === undefined) {
-            dfn.makeID(null, title);
-          }
-          listOfDuplicateDfns.push(dfn[0]);
-        }
+        const oldIsDfn = titles[title][dfnFor].localName === "dfn";
+        const newIsDfn = dfn.localName === "dfn";
         if (oldIsDfn) {
-          // Don't overwrite <dfn> definitions.
-          return;
+          if (!newIsDfn) {
+            // Don't overwrite <dfn> definitions.
+            return;
+          }
+          listOfDuplicateDfns.push(dfn);
         }
       }
-      titles[title][dfn_for] = dfn;
-      if (dfn.attr("id") === undefined) {
-        if (dfn.attr("data-idl")) {
-          dfn.makeID("dom", (dfn_for ? dfn_for + "-" : "") + title);
+      titles[title][dfnFor] = dfn;
+      if (!dfn.id) {
+        if (dfn.dataset.idl) {
+          addId(dfn, "dom", (dfnFor ? dfnFor + "-" : "") + title);
         } else {
-          dfn.makeID("dfn", title);
+          addId(dfn, "dfn", title);
         }
       }
     });
     if (listOfDuplicateDfns.length > 0) {
-      const dfnsList = listOfDuplicateDfns
-        .map((elem, i) => {
-          return `[${i + 1}](#${elem.id})`;
-        })
-        .join(", ");
-      pub("error", `Duplicate definitions of '${title}' at: ${dfnsList}.`);
+      showInlineError(
+        listOfDuplicateDfns,
+        `Duplicate definitions of '${title}'`,
+        l10n[lang].duplicate
+      );
     }
   });
 
@@ -73,27 +69,22 @@ export async function run(conf, doc, cb) {
 
   const localLinkSelector =
     "a[data-cite=''], a:not([href]):not([data-cite]):not(.logo)";
-  $(localLinkSelector).each(function() {
-    const $ant = $(this);
-    const ant = $ant[0];
+  document.querySelectorAll(localLinkSelector).forEach(ant => {
     if (ant.classList.contains("externalDFN")) return;
     const linkTargets = getLinkTargets(ant);
+    const { linkFor } = ant.dataset;
     const foundDfn = linkTargets.some(target => {
-      if (ant.classList.contains("respec-idl-xref")) return false;
       if (titles[target.title] && titles[target.title][target.for]) {
-        const $dfn = titles[target.title][target.for];
-        const dfn = $dfn[0];
-        const lt = dfn.dataset.lt ? dfn.dataset.lt.split("|") : [];
-        const plurals = dfn.dataset.plurals
-          ? dfn.dataset.plurals.split("|")
-          : [];
-        const txt = ant.textContent.toLowerCase();
+        const dfn = titles[target.title][target.for];
         if (dfn.dataset.cite) {
           ant.dataset.cite = dfn.dataset.cite;
-        } else if (conf.xref && (lt.includes(txt) || plurals.includes(txt))) {
-          ant.dataset.dfnType = "xref";
+        } else if (linkFor && !titles[linkFor.toLowerCase()]) {
+          possibleExternalLinks.push(ant);
+        } else if (dfn.classList.contains("externalDFN")) {
           // data-lt[0] serves as unique id for the dfn which this element references
-          ant.dataset.xref = lt[0];
+          const lt = dfn.dataset.lt ? dfn.dataset.lt.split("|") : [];
+          ant.dataset.lt = lt[0] || dfn.textContent;
+          possibleExternalLinks.push(ant);
         } else {
           ant.href = "#" + dfn.id;
           ant.classList.add("internalDFN");
@@ -105,13 +96,12 @@ export async function run(conf, doc, cb) {
         // If a definition is <code>, links to it should
         // also be <code>.
         //
-        // Note that contents().length===1 excludes
+        // Note that childNodes.length === 1 excludes
         // definitions that have either other text, or other
         // whitespace, inside the <dfn>.
-        // TODO: un-jquery-fy
         if (
           dfn.closest("code,pre") ||
-          ($dfn.contents().length === 1 &&
+          (dfn.childNodes.length === 1 &&
             [...dfn.children].filter(c => c.localName === "code").length === 1)
         ) {
           // only add code to IDL when the definition matches
@@ -129,7 +119,7 @@ export async function run(conf, doc, cb) {
           if (isIDL && !needsCode) {
             return true;
           }
-          $ant.wrapInner("<code></code>");
+          wrapInner(ant, document.createElement("code"));
         }
         return true;
       }
@@ -137,19 +127,15 @@ export async function run(conf, doc, cb) {
     });
     if (!foundDfn && linkTargets.length !== 0) {
       // ignore WebIDL
-      if (
-        !$ant.parents(
-          ".idl:not(.extAttr), dl.methods, dl.attributes, dl.constants, dl.constructors, dl.fields, dl.dictionary-members, span.idlMemberType, span.idlTypedefType, div.idlImplementsDesc"
-        ).length
-      ) {
+      if (!ant.closest("pre.idl")) {
         if (ant.dataset.cite === "") {
           badLinks.push(ant);
-        } else if (ant.dataset.dfnType !== "xref") {
+        } else {
           possibleExternalLinks.push(ant);
         }
         return;
       }
-      $ant.replaceWith($ant.contents());
+      ant.replaceWith(...ant.childNodes);
     }
   });
 
@@ -182,24 +168,20 @@ export async function run(conf, doc, cb) {
     showLinkingError(possibleExternalLinks);
   }
 
-  linkInlineCitations(doc, conf).then(() => {
-    // Added message for legacy compat with Aria specs
-    // See https://github.com/w3c/respec/issues/793
-    pub("end", "core/link-to-dfn");
-    cb();
-  });
+  await linkInlineCitations(document, conf);
+  // Added message for legacy compat with Aria specs
+  // See https://github.com/w3c/respec/issues/793
+  pub("end", "core/link-to-dfn");
 }
 
 function showLinkingError(elems) {
   elems.forEach(elem => {
-    elem.classList.add("respec-offending-element");
-    elem.title = "Linking error: not matching <dfn>";
-    pub(
-      "warn",
+    showInlineWarning(
+      elem,
       `Found linkless \`<a>\` element with text "${
         elem.textContent
-      }" but no matching \`<dfn>\`.`
+      }" but no matching \`<dfn>\``,
+      "Linking error: not matching <dfn>"
     );
-    console.warn("Linkless element:", elem);
   });
 }

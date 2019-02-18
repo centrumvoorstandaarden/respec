@@ -3,7 +3,7 @@
 /*globals module, require, process*/
 "use strict";
 module.exports = function(config) {
-  var options = {
+  const options = {
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: "./",
 
@@ -27,6 +27,11 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       "js/deps/jquery.js",
+      {
+        pattern: "tests/support-files/**/*",
+        included: false,
+        served: true,
+      },
       {
         pattern: "builds/**/*.*",
         included: false,
@@ -84,6 +89,8 @@ module.exports = function(config) {
       "/base/deps/": "/base/js/deps/",
       "/base/deps/marked.js": "/base/js/deps/marked.js",
       "/worker/respec-worker.js": "/base/worker/respec-worker.js",
+      "/support-files/hljs-testlang.js":
+        "/base/tests/support-files/hljs-testlang.js",
     },
 
     // preprocess matching files before serving them to the browser
@@ -126,12 +133,13 @@ module.exports = function(config) {
     },
   };
   if (process.env.TRAVIS) {
+    process.env.CHROME_BIN = require("puppeteer").executablePath();
     options.detectBrowsers.enabled = false;
     options.autoWatch = false;
     options.singleRun = true;
     options.concurrency = 1;
     options.reporters = ["mocha"];
-    options.browsers = ["ChromeHeadless"]; //"Firefox"
+    options.browsers = ["ChromeHeadless"];
   }
   config.set(options);
 };

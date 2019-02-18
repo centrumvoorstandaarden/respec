@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 /*eslint-env node*/
 "use strict";
+const port = 5000;
 const testURLs = [
-  "https://tools.geostandaarden.nl/respec/test/whitepaper/"
+  "https://tools.geostandaarden.nl/respec/test/whitepaper/",
+  `http://localhost:${port}/examples/basic.built.html`,
+  `http://localhost:${port}/examples/basic.html`,
 ];
 const colors = require("colors");
 const { exec } = require("child_process");
@@ -18,6 +21,9 @@ colors.setTheme({
   verbose: "cyan",
   warn: "yellow",
 });
+
+const handler = require("serve-handler");
+const http = require("http");
 
 function toExecutable(cmd) {
   return {
@@ -40,6 +46,11 @@ function toExecutable(cmd) {
 }
 
 async function runRespec2html() {
+  const server = http.createServer((request, response) => {
+    return handler(request, response);
+  });
+  server.listen(port, () => {});
+
   const errors = new Set();
   // Incrementally spawn processes and add them to process counter.
   const executables = testURLs.map(url => {
