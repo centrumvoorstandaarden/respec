@@ -58,7 +58,8 @@ define(
     "./core/data-include",
     "./core/markdown",
     "./geonovum/headers",
-    "./geonovum/abstract",
+    // "./geonovum/abstract",
+    "./w3c/abstract",
     "./geonovum/conformance",
     "./core/data-transform",
     // Thijs Brentjens Geonovum: use geonovum customized inlines, for RFC2119 in Dutch
