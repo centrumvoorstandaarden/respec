@@ -12,7 +12,7 @@
 import { addId, children, parents, renameElement } from "./utils";
 import { lang as defaultLang } from "../core/l10n";
 import hyperHTML from "hyperhtml";
-import { l10n, lang } from "./l10n";
+// import { l10n, lang } from "./l10n";
 
 const lowerHeaderTags = ["h2", "h3", "h4", "h5", "h6"];
 const headerTags = ["h1", ...lowerHeaderTags];
