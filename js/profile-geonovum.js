@@ -58,7 +58,6 @@ define(
     "./core/data-include",
     "./core/markdown",
     "./geonovum/headers",
-    // "./geonovum/abstract",
     "./w3c/abstract",
     "./geonovum/conformance",
     "./core/data-transform",
@@ -67,8 +66,6 @@ define(
     "./geonovum/inlines",
     "./core/dfn",
     "./core/pluralize",
-    // Thijs: TODO: check rfc2119: why is this not used in Geonovum profile?
-    // "./w3c/rfc2119",
     "./core/examples",
     "./core/issues-notes",
     "./core/requirements",
@@ -84,7 +81,6 @@ define(
     "./core/fix-headers",
     "./core/structure",
     "./geonovum/informative", // TODO: check: voor een niet normatieve tekst is een apart script opgenomen. Is dit nog nodig? Of naar i10n vertalen?
-    // "./geonovum/permalinks", // TODO: check wat die nu nog precies doet, kan nodig zijn dat dit custom Geonovum is
     "./core/id-headers",
     "./core/caniuse",
     // "w3c/aria",
