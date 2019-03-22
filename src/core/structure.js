@@ -12,7 +12,6 @@
 import { addId, children, parents, renameElement } from "./utils";
 import { lang as defaultLang } from "../core/l10n";
 import hyperHTML from "hyperhtml";
-// import { l10n, lang } from "./l10n";
 
 const lowerHeaderTags = ["h2", "h3", "h4", "h5", "h6"];
 const headerTags = ["h1", ...lowerHeaderTags];
@@ -23,9 +22,11 @@ export const name = "core/structure";
 const localizationStrings = {
   en: {
     toc: "Table of Contents",
+    back_to_top: "Back to Top",
   },
   nl: {
     toc: "Inhoudsopgave",
+    back_to_top: "Naar begin",
   },
   es: {
     toc: "Tabla de Contenidos",
@@ -231,7 +232,7 @@ function createTableOfContents(ol) {
     }
   }
 
-  const link = hyperHTML`<p role='navigation' id='back-to-top'><a href='#title'><abbr title='${conf.l10n.back_to_top}'>&uarr;</abbr></a></p>`;
+  const link = hyperHTML`<p role='navigation' id='back-to-top'><a href='#title'><abbr title='${l10n.back_to_top}'>&uarr;</abbr></a></p>`;
   document.body.append(link);
 }
 
