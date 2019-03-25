@@ -10,14 +10,32 @@
 //  - maxTocLevel: only generate a TOC so many levels deep
 
 import { addId, children, parents, renameElement } from "./utils";
+import { lang as defaultLang } from "../core/l10n";
 import hyperHTML from "hyperhtml";
-import { l10n, lang } from "./l10n";
 
 const lowerHeaderTags = ["h2", "h3", "h4", "h5", "h6"];
 const headerTags = ["h1", ...lowerHeaderTags];
 
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 export const name = "core/structure";
+
+const localizationStrings = {
+  en: {
+    toc: "Table of Contents",
+    back_to_top: "Back to Top",
+  },
+  nl: {
+    toc: "Inhoudsopgave",
+    back_to_top: "Naar begin",
+  },
+  es: {
+    toc: "Tabla de Contenidos",
+  },
+};
+
+const lang = defaultLang in localizationStrings ? defaultLang : "en";
+
+const l10n = localizationStrings[lang];
 
 /**
  * @typedef {{ secno: string, title: string }} SectionInfo
@@ -194,12 +212,12 @@ function getNonintroductorySectionHeaders() {
  * @param {HTMLElement} ol
  * @param {*} conf
  */
-function createTableOfContents(ol, conf) {
+function createTableOfContents(ol) {
   if (!ol) {
     return;
   }
   const nav = hyperHTML`<nav id="toc">`;
-  const h2 = hyperHTML`<h2 class="introductory">${conf.l10n.toc}</h2>`;
+  const h2 = hyperHTML`<h2 class="introductory">${l10n.toc}</h2>`;
   addId(h2);
   nav.append(h2, ol);
   const ref =
@@ -214,7 +232,7 @@ function createTableOfContents(ol, conf) {
     }
   }
 
-  const link = hyperHTML`<p role='navigation' id='back-to-top'><a href='#title'><abbr title='${conf.l10n.back_to_top}'>&uarr;</abbr></a></p>`;
+  const link = hyperHTML`<p role='navigation' id='back-to-top'><a href='#title'><abbr title='${l10n.back_to_top}'>&uarr;</abbr></a></p>`;
   document.body.append(link);
 }
 
@@ -226,7 +244,7 @@ function updateEmptyAnchors(secMap) {
   [...document.querySelectorAll("a[href^='#']:not(.tocxref)")]
     .filter(
       anchor =>
-        anchor.textContent === "" &&
+        anchor.textContent.trim() === "" &&
         anchor.getAttribute("href").slice(1) in secMap
     )
     .forEach(anchor => {
@@ -237,7 +255,10 @@ function updateEmptyAnchors(secMap) {
         anchor.append(l10n[lang].section);
       }
       if (secno) {
-        anchor.append(hyperHTML`<span class='secno'>§ ${secno}</span>`, " ");
+        anchor.append(
+          hyperHTML`<span class='secno'>§&nbsp;${secno}</span>`,
+          " "
+        );
       }
       anchor.append(hyperHTML`<span class='sec-title'>${title.trim()}</span>`);
     });

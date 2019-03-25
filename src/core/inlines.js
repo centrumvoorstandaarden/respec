@@ -17,14 +17,84 @@
 import { getTextNodes, refTypeFromContext, showInlineWarning } from "./utils";
 import hyperHTML from "hyperhtml";
 import { idlStringToHtml } from "./inline-idl-parser";
-import { pub } from "./pubsubhub";
+import { renderInlineCitation } from "./render-biblio";
 export const name = "core/inlines";
+export const rfc2119Usage = {};
+
+/**
+ * @param {string} matched
+ * @return {HTMLElement}
+ */
+function inlineRFC2119Matches(matched) {
+  const normalize = matched.split(/\s+/).join(" ");
+  const nodeElement = hyperHTML`<em class="rfc2119" title="${normalize}">${normalize}</em>`;
+  // remember which ones were used
+  rfc2119Usage[normalize] = true;
+  return nodeElement;
+}
+
+/**
+ * @param {string} matched
+ */
+function inlineXrefMatches(matched) {
+  // slices "{{{" at the beginning and "}}}" at the end
+  const ref = matched.slice(3, -3).trim();
+  return ref.startsWith("\\")
+    ? document.createTextNode(`{{{${ref.slice(1)}}}}`)
+    : idlStringToHtml(ref);
+}
+
+/**
+ * @param {string} matched
+ * @param {Text} txt
+ * @param {Object} conf
+ * @return {Iterable<Node>}
+ */
+function inlineBibrefMatches(matched, txt, conf) {
+  // slices "[[" at the start and "]]" at the end
+  const ref = matched.slice(2, -2);
+  if (ref.startsWith("\\")) {
+    return [document.createTextNode(`[[${ref.slice(1)}]]`)];
+  }
+  const { type, illegal } = refTypeFromContext(ref, txt.parentNode);
+  const cite = renderInlineCitation(ref);
+  const cleanRef = ref.replace(/^(!|\?)/, "");
+  if (illegal && !conf.normativeReferences.has(cleanRef)) {
+    showInlineWarning(
+      cite.childNodes[1], // cite element
+      "Normative references in informative sections are not allowed. " +
+        `Remove '!' from the start of the reference \`[[!${ref}]]\``
+    );
+  }
+
+  if (type === "informative" && !illegal) {
+    conf.informativeReferences.add(cleanRef);
+  } else {
+    conf.normativeReferences.add(cleanRef);
+  }
+  return cite.childNodes;
+}
+
+/**
+ * @param {string} matched
+ * @param {Text} txt
+ * @param {Map<string, string>} abbrMap
+ */
+function inlineAbbrMatches(matched, txt, abbrMap) {
+  return txt.parentElement.tagName === "ABBR"
+    ? document.createTextNode(matched)
+    : hyperHTML`<abbr title="${abbrMap.get(matched)}">${matched}</abbr>`;
+}
 
 export function run(conf) {
   document.normalize();
+  if (!document.querySelector("section#conformance")) {
+    // make the document informative
+    document.body.classList.add("informative");
+  }
   if (!conf.normativeReferences) conf.normativeReferences = new Set();
   if (!conf.informativeReferences) conf.informativeReferences = new Set();
-  if (!conf.respecRFC2119) conf.respecRFC2119 = {};
+  if (!conf.respecRFC2119) conf.respecRFC2119 = rfc2119Usage;
 
   // PRE-PROCESSING
   const abbrMap = new Map();
@@ -34,7 +104,6 @@ export function run(conf) {
     abbrMap.set(abbr.textContent, abbr.title);
   }
   const aKeys = [...abbrMap.keys()];
-  aKeys.sort((a, b) => b.length - a.length);
   const abbrRx = aKeys.length ? `(?:\\b${aKeys.join("\\b)|(?:\\b")}\\b)` : null;
 
   // PROCESSING
@@ -58,83 +127,32 @@ export function run(conf) {
     if (subtxt.length === 1) continue;
 
     const df = document.createDocumentFragment();
-    while (subtxt.length) {
-      const t = subtxt.shift();
-      let matched = null;
-      if (subtxt.length) matched = subtxt.shift();
-      df.appendChild(document.createTextNode(t));
-      if (matched) {
-        // RFC 2119
-        if (
-          /MUST(?:\s+NOT)?|SHOULD(?:\s+NOT)?|SHALL(?:\s+NOT)?|MAY|(?:NOT\s+)?REQUIRED|(?:NOT\s+)?RECOMMENDED|OPTIONAL/.test(
-            matched
-          )
-        ) {
-          matched = matched.split(/\s+/).join(" ");
-          df.appendChild(
-            hyperHTML`<em class="rfc2119" title="${matched}">${matched}</em>`
-          );
-          // remember which ones were used
-          conf.respecRFC2119[matched] = true;
-        } else if (matched.startsWith("{{{")) {
-          // External IDL references (xref)
-          const ref = matched
-            .replace(/^\{{3}/, "")
-            .replace(/\}{3}$/, "")
-            .trim();
-          if (ref.startsWith("\\")) {
-            df.appendChild(
-              document.createTextNode(`{{{${ref.replace(/^\\/, "")}}}}`)
-            );
-          } else {
-            df.appendChild(idlStringToHtml(ref));
-          }
-        } else if (matched.startsWith("[[")) {
-          // BIBREF
-          let ref = matched;
-          ref = ref.replace(/^\[\[/, "");
-          ref = ref.replace(/\]\]$/, "");
-          if (ref.startsWith("\\")) {
-            df.appendChild(
-              document.createTextNode(`[[${ref.replace(/^\\/, "")}]]`)
-            );
-          } else {
-            const { type, illegal } = refTypeFromContext(ref, txt.parentNode);
-            ref = ref.replace(/^(!|\?)/, "");
-            df.appendChild(document.createTextNode("["));
-            const refHref = `#bib-${ref.toLowerCase()}`;
-            const cite = hyperHTML`<cite><a class="bibref" href="${refHref}">${ref}</a></cite>`;
-            df.appendChild(cite);
-            df.appendChild(document.createTextNode("]"));
-
-            if (illegal && !conf.normativeReferences.has(ref)) {
-              showInlineWarning(
-                cite,
-                "Normative references in informative sections are not allowed. " +
-                  `Remove '!' from the start of the reference \`[[!${ref}]]\``
-              );
-            }
-
-            if (type === "informative" && !illegal) {
-              conf.informativeReferences.add(ref);
-            } else {
-              conf.normativeReferences.add(ref);
-            }
-          }
-        } else if (abbrMap.has(matched)) {
-          // ABBR
-          if (txt.parentElement.tagName === "ABBR")
-            df.appendChild(document.createTextNode(matched));
-          else
-            df.appendChild(hyperHTML`
-              <abbr title="${abbrMap.get(matched)}">${matched}</abbr>`);
-        } else {
-          // FAIL -- not sure that this can really happen
-          pub(
-            "error",
-            `Found token '${matched}' but it does not correspond to anything`
-          );
-        }
+    let matched = true;
+    for (const t of subtxt) {
+      matched = !matched;
+      if (!matched) {
+        df.appendChild(document.createTextNode(t));
+      } else if (t.startsWith("{{{")) {
+        const node = inlineXrefMatches(t);
+        df.appendChild(node);
+      } else if (t.startsWith("[[")) {
+        const nodes = inlineBibrefMatches(t, txt, conf);
+        df.append(...nodes);
+      } else if (abbrMap.has(t)) {
+        const node = inlineAbbrMatches(t, txt, abbrMap);
+        df.appendChild(node);
+      } else if (
+        /MUST(?:\s+NOT)?|SHOULD(?:\s+NOT)?|SHALL(?:\s+NOT)?|MAY|(?:NOT\s+)?REQUIRED|(?:NOT\s+)?RECOMMENDED|OPTIONAL/.test(
+          t
+        )
+      ) {
+        const node = inlineRFC2119Matches(t);
+        df.appendChild(node);
+      } else {
+        // FAIL -- not sure that this can really happen
+        throw new Error(
+          `Found token '${t}' but it does not correspond to anything`
+        );
       }
     }
     txt.parentNode.replaceChild(df, txt);
