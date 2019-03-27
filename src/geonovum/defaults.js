@@ -48,7 +48,7 @@ const geonovumDefaults = {
     "no-http-props": true,
   },
   doJsonLd: true,
-  license: "cc-by-nd",
+  license: "cc-by",
   specStatus: "GN-BASIS",
   logos: [{
     src: "https://tools.geostandaarden.nl/respec/style/logos/Geonovum.svg",
@@ -62,7 +62,7 @@ const geonovumDefaults = {
 
 function computeProps(conf) {
   return {
-    isCCBY: conf.license === "cc-by-nd",
+    isCCBY: conf.license === "cc-by",
     licenseInfo: licenses.get(conf.license),
     isBasic: conf.specStatus === "GN-BASIS",
     isRegular: conf.specStatus === "GN-BASIS",
