@@ -41,11 +41,7 @@ function createMetaViewport() {
 function createStyle(css_name) {
   const link = document.createElement("link");
   link.rel = "stylesheet";
-  link.href = "https://tools.geostandaarden.nl/respec/style/{0}.css".replace(
-    "{0}",
-    css_name
-  );
-  link.classList.add("removeOnSave");
+  link.href = `https://tools.geostandaarden.nl/respec/style/${css_name}.css`;
   return link;
 }
 
@@ -99,12 +95,6 @@ if (!document.head.querySelector("meta[name=viewport]")) {
   elements.prepend(createMetaViewport());
 }
 
-if (document.body.querySelector("figure.scalable")) {
-  // Apply leaflet style if class scalable is present
-  elements.appendChild(createStyle("leaflet"));
-  elements.appendChild(createStyle("font-awesome"));
-}
-
 document.head.prepend(elements);
 
 // export function run(conf, doc, cb) {
@@ -113,6 +103,12 @@ export function run(conf) {
     const warn = "`respecConfig.specStatus` missing. Defaulting to 'GN-BASIS'.";
     conf.specStatus = "GN-BASIS";
     pub("warn", warn);
+  }
+
+  if (document.body.querySelector("figure.scalable")) {
+    // Apply leaflet style if class scalable is present
+    elements.appendChild(createStyle("leaflet"));
+    elements.appendChild(createStyle("font-awesome"));
   }
 
   let styleFile = "";
