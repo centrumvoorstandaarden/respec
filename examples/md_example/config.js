@@ -115,7 +115,6 @@ var respecConfig =
   license: "cc-by",              //-- bronvermelding, geen afgeleide werken (default)
   // license: "cc0",                //-- Public Domain Dedication
   // license: "cc-by",              //-- Attribution, met bronvermelding
-
   //-- localBiblio: lokale bibliografie, voor verwijzigingen
   //-- NB: kijk eesrt naar de beschikbare www.specref.org voor verwijziging
   localBiblio:
