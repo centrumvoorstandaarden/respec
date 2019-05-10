@@ -102,6 +102,7 @@ var respecConfig =
   //pubDomain: "oov", 	            // Openbare Orde en Veiligheid
   //pubDomain: "ro", 	              // Ruimtelijke Ordening
   //pubDomain: "serv", 	            // Services
+  //pubDomain: "tpod", 	            // Standaarden Omgevingswet
   //pubDomain: "visu", 	            // Visualisatie
   //pubDomain: "wp", 	              // White Paper
   //-- Repositorynaam op GitHub -------------------------------------------------------
@@ -111,7 +112,7 @@ var respecConfig =
   //-- edDraftURI: de URI van de werkversie van het document
   //edDraftURI: "https://github.io/geonovum/respec/examples/md_example",
   //-- license: voor de geldende gebruiksvoorwaarden
-  license: "cc-by-nd",              //-- bronvermelding, geen afgeleide werken (default)
+  license: "cc-by",              //-- bronvermelding, geen afgeleide werken (default)
   // license: "cc0",                //-- Public Domain Dedication
   // license: "cc-by",              //-- Attribution, met bronvermelding
 
