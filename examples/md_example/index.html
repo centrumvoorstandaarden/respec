@@ -17,22 +17,23 @@
         <!-- meta tags - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
         <meta content="text/html; charset=utf-8" http-equiv="content-type">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        
+
         <!-- Invullen: de titel van de standaard of het document - - - - - - - - - - - - - - - - - - -->
-        <title>Respec en Markdown cases</title>    
-        
+        <title>Respec en Markdown cases</title>
+
         <!-- Invullen: de naam van de lokale CSS file  - - - - - - - - - - - - - - - - - - - - - - - -->
         <!-- link rel="stylesheet" type="text/css" href="./media/style.css" -->
         <link rel='shortcut icon' type='image/x-icon' href='https://tools.geostandaarden.nl/respec/style/logos/Geonovum.ico' />
         <script class="remove" src="./config.js"></script>
-        <script class='remove' src='https://tools.geostandaarden.nl/respec/builds/respec-geonovum.js' async></script>
+        <!-- <script class='remove' src='https://tools.geostandaarden.nl/respec/builds/respec-geonovum.js' async></script> -->
+        <script src='/js/deps/require.js' data-main='/js/profile-geonovum' class='remove'></script>
     </head>
     <!-- HTML-Body - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <body>
-        <section id='abstract' data-format="markdown" data-include="Samenvatting.md"><h2>Samenvatting</h2></section> 
+        <section id='abstract' data-format="markdown" data-include="Samenvatting.md"><h2>Samenvatting</h2></section>
         <!-- sodt = 'status of this document'. ReSpec genereert automatisch een tekst hierin - - - - -->
         <!-- op basis van specType en specStatus.- - - - - - - - - - - - - - - - - - - - - - - - - - -->
-        <!-- Deze automatische tekst kun je aanvullen door tussen <p></p> iets te typen. - - - - - - -->       
+        <!-- Deze automatische tekst kun je aanvullen door tussen <p></p> iets te typen. - - - - - - -->
         <section id='sotd'><p></p></section>
 
         <!-- vanaf hier per hoofdstuk een sectie of een div in het document- - - - - - - - - - - - - -->
@@ -45,7 +46,7 @@
         <section id='H01' data-format="markdown" data-include="H1-Doel.md"><h2>Inleiding</h2></section>
         <section id='H02' data-format="markdown" data-include="H2-Testcases.md"><h2>Testcases</h2></section>
         <section id='B00' data-format="markdown" data-include="Bijlagen.md"><h2>Bijlagen</h2></section>
-        
+
         <!-- genereer hier een afbeeldingen lijst- - - - - - - - - - - - - - - - - - - - - - - - - - -->
         <section id="tof"><h2>Lijst van afbeeldingen</h2></section>
     </body>

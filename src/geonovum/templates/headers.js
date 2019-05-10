@@ -65,7 +65,7 @@ export default conf => {
           <dd>
             <div class='copyright' style="margin: 0.25em 0;">
               <abbr title='${[conf.licenseInfo.name]}'>
-              <a href='${[conf.licenseInfo.url]}'><img src='https://tools.geostandaarden.nl/respec/style/logos/CC-Licentie.svg' alt='${[conf.licenseInfo.name]}' width='115' height='40'></a>
+              <a href='${[conf.licenseInfo.url]}'><img src='${[conf.licenseInfo.image]}' alt='${[conf.licenseInfo.name]}' width='115' height='40'></a>
             </abbr>
               <div style="display:inline-block; vertical-align:top">
                 <p style="font-size: small;">${[conf.licenseInfo.name]}<br>(${[conf.licenseInfo.short]})</p>
