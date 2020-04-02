@@ -22,7 +22,7 @@
 <glyph horiz-adv-x="1024" unicode="v" d="M430,0l-404,1062l190,0l228,-636C469,357 491,286 512,212C528,268 550,335 579,414l236,648l185,0l-402,-1062z"/>
 </font>
 <rect width="25" height="380" fill="#045D9F"/>
-<text font-size="20" font-family="&apos;ArialMT&apos;" transform="matrix(0 -1 1 0 18.506 307.36)" fill="#FFFFFF">Geonovum Versie ter vaststelling</text>
+<text font-size="20" font-family="&apos;ArialMT&apos;" transform="matrix(0 -1 1 0 18.506 307.36)" fill="#FFFFFF">Logius Versie ter vaststelling</text>
 <rect x="-.000488" height="380" width="25" fill="none"/>
 <rect y="15" width="25" height="365" fill="none"/>
 </svg>
