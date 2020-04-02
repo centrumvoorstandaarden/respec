@@ -148,9 +148,10 @@ define(["exports", "../core/utils", "../core/pubsubhub"], function (_exports, _u
       }, {
         once: true
       });
-    }
+    } // const finalStyleURL = `https://raw.githubusercontent.com/centrumvoorstandaarden/respec/develop/media/${styleFile}`;
 
-    const finalStyleURL = "https://raw.githubusercontent.com/centrumvoorstandaarden/respec/develop/media/".concat(styleFile);
+
+    const finalStyleURL = "../../media/".concat(styleFile);
     (0, _utils.linkCSS)(doc, finalStyleURL);
     const head = doc.querySelector("head");
     head.appendChild(favicon); // Collect elements for insertion (document fragment)

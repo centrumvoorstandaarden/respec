@@ -3,5 +3,5 @@
 @import "base.css";
 
 body {
-  background-image: url('https://raw.githubusercontent.com/centrumvoorstandaarden/respec/develop/media/logos/GN-CV.svg');
+  background-image: url('./logos/GN-CV.svg');
 }

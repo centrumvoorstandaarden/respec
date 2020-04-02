@@ -152,7 +152,8 @@ export function run(conf, doc, cb) {
       { once: true }
     );
   }
-  const finalStyleURL = `https://raw.githubusercontent.com/centrumvoorstandaarden/respec/develop/media/${styleFile}`;
+  // const finalStyleURL = `https://raw.githubusercontent.com/centrumvoorstandaarden/respec/develop/media/${styleFile}`;
+  const finalStyleURL = `../../media/${styleFile}`;
   linkCSS(doc, finalStyleURL);
   const head = doc.querySelector("head");
   head.appendChild(favicon);
