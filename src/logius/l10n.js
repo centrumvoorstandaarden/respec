@@ -6,11 +6,11 @@ export const name = "logius/l10n";
 const additions = {
   en: {
     status_at_publication:
-      "This section describes the status of this document at the time of its publication. Other documents may supersede this document. A list of current Geonovum publications and the latest revision of this document can be found via <a href='TODO'>TODO</a>(in Dutch).",
+      "This section describes the status of this document at the time of its publication. Other documents may supersede this document. A list of current Logius publications and the latest revision of this document can be found via <a href='TODO'>TODO</a>(in Dutch).",
   },
   nl: {
     status_at_publication:
-      "Deze paragraaf beschrijft de status van dit document ten tijde van publicatie. Het is mogelijk dat er actuelere versies van dit document bestaan. Een lijst van Geonovum publicaties en de laatste gepubliceerde versie van dit document zijn te vinden op <a href='TODO'>TODO</a>.",
+      "Deze paragraaf beschrijft de status van dit document ten tijde van publicatie. Het is mogelijk dat er actuelere versies van dit document bestaan. Een lijst van Logius publicaties en de laatste gepubliceerde versie van dit document zijn te vinden op <a href='TODO'>TODO</a>.",
   },
 };
 

@@ -43,7 +43,7 @@ function createMetaViewport() {
 function createStyle(css_name) {
   const link = document.createElement("link");
   link.rel = "stylesheet";
-  link.href = "https://raw.githubusercontent.com/centrumvoorstandaarden/respec/develop/media/{0}.css".replace(
+  link.href = "https://centrumvoorstandaarden.github.io/respec-tools/media/{0}.css".replace(
     "{0}",
     css_name
   );
@@ -55,7 +55,7 @@ function createStyle(css_name) {
 const favicon = document.createElement("link");
 favicon.rel = "shortcut icon";
 favicon.type = "image/x-icon";
-favicon.href = "https://tools.geostandaarden.nl/respec/style/logos/Geonovum.ico";
+favicon.href = "https://centrumvoorstandaarden.github.io/respec-tools/media/Geonovum.ico";
 
 // function createBaseStyle() {
 //   const link = document.createElement("link");
@@ -153,7 +153,7 @@ export function run(conf, doc, cb) {
     );
   }
   // const finalStyleURL = `https://raw.githubusercontent.com/centrumvoorstandaarden/respec/develop/media/${styleFile}`;
-  const finalStyleURL = `../../media/${styleFile}`;
+  const finalStyleURL = `https://centrumvoorstandaarden.github.io/respec-tools/media/${styleFile}`;
   linkCSS(doc, finalStyleURL);
   const head = doc.querySelector("head");
   head.appendChild(favicon);
