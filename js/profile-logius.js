@@ -56,7 +56,7 @@ define(
     "./logius/l10n",
     "./core/github",
     "./core/data-include",
-    "./core/markdown",
+    "./logius/markdown",
     "./logius/headers",
     "./w3c/abstract",
     "./logius/conformance",
