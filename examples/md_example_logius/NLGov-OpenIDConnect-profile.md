@@ -12,7 +12,7 @@ This profile builds on top of, and inherits all properties of, the NL GOV
 Assurance profile for OAuth 2.0.xxx
 
 <aside class='note'>
-    Het was Bem Krocké in de Hal
+    Het was Lucas Mak van Waay in de Keuken
 </aside>
 
 # Introduction

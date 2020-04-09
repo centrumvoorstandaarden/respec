@@ -173,9 +173,8 @@ export function run(conf) {
   // Pieter Hering, Logius
   // xformat is a Logius specific config property set in config.js
   if (isMDFormat && conf.xformat) {
-    // see TODO remarks on this construct below 
-    splitH1sections("[data-format=markdown]:not(body)");
-  }  
+    document.body.innerHTML = splitH1sections("[data-format=markdown]:not(body)"); 
+  }
   // end addition
 
   // Only has markdown-format sections
@@ -266,9 +265,11 @@ export function run(conf) {
 // 2. call filterH1lines for each node
 // 3. mark original node whith a (bogus) 'killme' class
 // 4. insert each node from nodes set returned by filterH1lines before orignal node  
-// 5. remove the marked original node
+// 5. remove the marked original nodes
 function splitH1sections(selector) {
-  var elements = document.body.querySelectorAll(selector);
+  var bodyCopy = document.body.cloneNode(true);
+  var elements = bodyCopy.querySelectorAll(selector);
+  
   elements.forEach(element => {
     var newNode = filterH1lines(element);
 
@@ -283,24 +284,14 @@ function splitH1sections(selector) {
   });
   // the selector is  using '~=' in query to retrieve all node that contains the killme attribute
   // this fixes a bug where 'normative killme'was not recognized 
-  elements = document.body.querySelectorAll("[class~=killme]:not(body)");
+  elements = bodyCopy.querySelectorAll("[class~=killme]:not(body)");
   // remove original elements
   elements.forEach(el => {
     var pn = el.parentNode;
     pn.removeChild(el);
   });
-  // TODO
-  // Although the function returns  document.body.innerHTML
-  // it has in fact already replaced the sections in the DOM
-  // I guess it is better (best?) practice that this function does not alter original DOM content
-  // but instead should be used something like  
-  // ...
-  //  document.body.innerHTML = splitH1Sections(selector);   
-  // ...
-  // instead of
-  // ... 
-  //  splitH1Sections(selector)
-  return document.body.innerHTML;
+
+  return bodyCopy.innerHTML;
 }
 
 // filterH1lines searches for a pattern like '# <section name>' (Markdown H1 section) in the node's innerhtml 
@@ -311,15 +302,16 @@ function filterH1lines(element) {
   const regex = /^[ ]*# [\w ]+/gm;
   const matches = element.innerHTML.matchAll(regex);
   const pos = [0];
-  var i = 0;
 
   for (const match of matches) {
-    // skip first match since Respec starts a new section by default 
-    if (i > 0) {
+  // skip first match since Respec starts a new section by default 
+    if (match.index > 0) {
       pos.push(match.index);
     }
-    i = i + 1;
   }
+
+
+  // add position of last character to have correct pairs for the substring operation    
   pos.push(element.innerHTML.length - 1);
 
   // create a div element as a container for the split sections
@@ -333,7 +325,7 @@ function filterH1lines(element) {
     for (var k = attrs.length - 1; k >= 0; k--) {
       newEl.setAttribute(attrs[k].name, attrs[k].value);
     }
-    // insert  the part that starting at H1 section until next H1 section
+    // insert  the part that starts at H1 section until next H1 section
     newEl.innerHTML = element.innerHTML.substring(pos[j], pos[j + 1])
     div.appendChild(newEl);
   }
