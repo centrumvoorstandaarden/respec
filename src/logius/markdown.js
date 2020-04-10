@@ -170,10 +170,11 @@ export function run(conf) {
     return; // Nothing to be done
   }
 
-  // Pieter Hering, Logius
-  // xformat is a Logius specific config property set in config.js
-  if (isMDFormat && conf.xformat) {
-    document.body.innerHTML = splitH1sections("[data-format=markdown]:not(body)"); 
+ // Pieter Hering, Logius
+  // splitMDsections is a Logius specific config property
+  if ((isMDFormat || hasMDSections) && conf.splitMDsections) {
+    const newMDBody = splitH1sections("[data-format=markdown]:not(body)");
+    //document.body.replaceWith(newMDBody);
   }
   // end addition
 
@@ -267,9 +268,13 @@ export function run(conf) {
 // 4. insert each node from nodes set returned by filterH1lines before orignal node  
 // 5. remove the marked original nodes
 function splitH1sections(selector) {
-  var bodyCopy = document.body.cloneNode(true);
+  // Todo
+  // for some unknown reason the more logical cloneNode works 
+  // but has the strange side effect that the 'RespecPill' keeps on rotating
+  // therefor we operate  directly on the document.body itself 
+  var bodyCopy = document.body; //.cloneNode(true);
   var elements = bodyCopy.querySelectorAll(selector);
-  
+
   elements.forEach(element => {
     var newNode = filterH1lines(element);
 
@@ -291,25 +296,23 @@ function splitH1sections(selector) {
     pn.removeChild(el);
   });
 
-  return bodyCopy.innerHTML;
+  return bodyCopy;
 }
 
 // filterH1lines searches for a pattern like '# <section name>' (Markdown H1 section) in the node's innerhtml 
 // and generates new sections for each part that starts with a H1 section  
 // see example above for an overview
 function filterH1lines(element) {
-  var attrs = element.attributes;
   const regex = /^[ ]*# [\w ]+/gm;
   const matches = element.innerHTML.matchAll(regex);
+  
   const pos = [0];
-
   for (const match of matches) {
-  // skip first match since Respec starts a new section by default 
+    // skip first match since Respec starts a new section by default 
     if (match.index > 0) {
       pos.push(match.index);
     }
   }
-
 
   // add position of last character to have correct pairs for the substring operation    
   pos.push(element.innerHTML.length - 1);
@@ -318,13 +321,7 @@ function filterH1lines(element) {
   // the div itself will/should not be used by the caller   
   var div = document.createElement("div");
   for (var j = 0; j < pos.length - 1; j++) {
-
-    // copy element name from original node
-    var newEl = document.createElement(element.localName);
-    // copy attributes from original node
-    for (var k = attrs.length - 1; k >= 0; k--) {
-      newEl.setAttribute(attrs[k].name, attrs[k].value);
-    }
+    var newEl = element.cloneNode(false);
     // insert  the part that starts at H1 section until next H1 section
     newEl.innerHTML = element.innerHTML.substring(pos[j], pos[j + 1])
     div.appendChild(newEl);

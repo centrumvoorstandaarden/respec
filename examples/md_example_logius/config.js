@@ -27,7 +27,7 @@ var respecConfig =
   //specType: "WA",                   // Werkafspraak
   //-- format is verplicht! -----------------------------------------------------------
   format: "markdown",                 // altijd "markdown"
-  xformat: true, // this is a logius specific parameter, by setting xFormat to true markdowns <section>s will be splitted into seperate <section>s
+  splitMDsections: true, // this is a logius specific parameter, by setting splitMDsections to true markdowns <section>s will be splitted into seperate <section>s
   //-- publishDate is verplicht -------------------------------------------------------
   //-- NB: in de werkversie uitzetten, want dan pakt Respec de pushdate ---------------
   //publishDate: "2018-09-18",  	    // Format is "YYY-MM-DD"
