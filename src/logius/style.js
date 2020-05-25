@@ -43,7 +43,7 @@ function createMetaViewport() {
 function createStyle(css_name) {
   const link = document.createElement("link");
   link.rel = "stylesheet";
-  link.href = "https://centrumvoorstandaarden.github.io/respec-tools/media/{0}.css".replace(
+  link.href = "http://docs.centrumvoorstandaarden.nl/public/respec-tools/media/{0}.css".replace(
     "{0}",
     css_name
   );
@@ -55,7 +55,7 @@ function createStyle(css_name) {
 const favicon = document.createElement("link");
 favicon.rel = "shortcut icon";
 favicon.type = "image/x-icon";
-favicon.href = "https://centrumvoorstandaarden.github.io/respec-tools/media/Geonovum.ico";
+favicon.href = "http://docs.centrumvoorstandaarden.nl/public/respec-tools/media/Logius.ico";
 
 // function createBaseStyle() {
 //   const link = document.createElement("link");
@@ -116,7 +116,7 @@ function createResourceHints() {
 export function run(conf, doc, cb) {
   if (!conf.specStatus) {
     const warn = "`respecConfig.specStatus` missing. Defaulting to 'base'.";
-    conf.specStatus = "GN-BASIS";
+    conf.specStatus = "DK-BASIS";
     pub("warn", warn);
   }
 
@@ -124,20 +124,29 @@ export function run(conf, doc, cb) {
 
   // Figure out which style file to use.
   switch (conf.specStatus.toUpperCase()) {
-    case "GN-WV":
-      styleFile += "GN-WV.css";
+    case "DK-WV":
+      styleFile += "DK-WV.css";
       break;
-    case "GN-CV":
-      styleFile += "GN-CV.css";
+    case "DK-CV":
+      styleFile += "DK-CV.css";
       break;
-    case "GN-VV":
-      styleFile += "GN-VV.css";
+    case "DK-VV":
+      styleFile += "DK-VV.css";
       break;
-    case "GN-DEF":
-      styleFile += "GN-DEF.css";
+    case "DK-DEF":
+      styleFile += "DK-DEF.css";
       break;
-    case "GN-BASIS":
-      styleFile += "GN-BASIS.css";
+    case "DK-TO":
+      styleFile += "DK-TO.css";
+      break;
+    case "DK-EO":
+      styleFile += "DK-EO.css";
+      break;
+    case "DK-TG":
+      styleFile += "DK-TG.css";
+      break;
+    case "DK-BASIS":
+      styleFile += "DK-BASIS.css";
       break;
     default:
       styleFile = "base.css";
@@ -153,7 +162,7 @@ export function run(conf, doc, cb) {
     );
   }
   // const finalStyleURL = `https://raw.githubusercontent.com/centrumvoorstandaarden/respec/develop/media/${styleFile}`;
-  const finalStyleURL = `https://centrumvoorstandaarden.github.io/respec-tools/media/${styleFile}`;
+  const finalStyleURL = `http://docs.centrumvoorstandaarden.nl/public/respec-tools/media/${styleFile}`;
   linkCSS(doc, finalStyleURL);
   const head = doc.querySelector("head");
   head.appendChild(favicon);
