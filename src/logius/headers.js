@@ -112,30 +112,33 @@ const GNVMDate = new Intl.DateTimeFormat(["nl"], {
 
 // Thijs: clean this up, for Geonovum
 // added statusses and types for Geonovum
-const status2maturity = {
-};
+const status2maturity = {};
 
 // Thijs Brentjens: added Geonovum statusses
 // https://github.com/Geonovum/respec/wiki/specStatus
 const status2text = {
-  "GN-WV": "Werkversie",
-  "GN-CV": "Consultatieversie",
-  "GN-VV": "Versie ter vaststelling",
-  "GN-DEF": "Vastgestelde versie",
-  "GN-BASIS": "Document",
+  "DK-WV": "In Ontwikkeling",
+  "DK-CV": "In Consultatie",
+  "DK-VV": "Versie ter vaststelling",
+  "DK-DEF": "In Gebruik",
+  "DK-EO": "Einde Ondersteuning",
+  "DK-TG": "Teruggetrokken",
+  "DK-TO": "Versie ter Vaststelling in het Technisch Overleg",
+  "DK-BASIS": "Document",
 };
 // Thijs Brentjens: added Geonovum types
 // https://github.com/Geonovum/respec/wiki/specType
 const type2text = {
-  NO: "Norm",
+  // NO: "Norm",
   ST: "Standaard",
-  IM: "Informatiemodel",
-  PR: "Praktijkrichtlijn",
+  // IM: "Informatiemodel",
+  PR: "Best Practice",
   HR: "Handreiking",
   WA: "Werkafspraak",
   // 2019-05-10 extend with 2 new types
   AL: "Algemeen",
-  BD: "Beheerdocumentatie"
+  BD: "Beheerdocumentatie",
+  RN: "Releasenotes",
 };
 
 const status2long = {
@@ -159,7 +162,8 @@ const licenses = {
     image: "https://tools.geostandaarden.nl/respec/style/logos/cc-by.svg",
   },
   "cc-by-nd": {
-    name: "Creative Commons Naamsvermelding-GeenAfgeleideWerken 4.0 Internationaal",
+    name:
+      "Creative Commons Naamsvermelding-GeenAfgeleideWerken 4.0 Internationaal",
     short: "CC-BY-ND",
     url: "https://creativecommons.org/licenses/by-nd/4.0/legalcode.nl",
     image: "https://tools.geostandaarden.nl/respec/style/logos/cc-by-nd.svg",
@@ -184,13 +188,14 @@ export function run(conf) {
   // Thijs Brentjens: TODO: decide by default unofficial?
   // conf.isUnofficial = conf.specStatus === "unofficial";
   conf.isUnofficial = true;
-  if (!conf.logos) { // conf.isUnofficial
+  if (!conf.logos) {
+    // conf.isUnofficial
     conf.logos = [];
   }
   conf.specStatus = conf.specStatus ? conf.specStatus.toUpperCase() : "";
   conf.specType = conf.specType ? conf.specType.toUpperCase() : "";
   conf.pubDomain = conf.pubDomain ? conf.pubDomain.toLowerCase() : "";
-  conf.hasBeenPublished = conf.publishDate ? true : false
+  conf.hasBeenPublished = conf.publishDate ? true : false;
   // Thijs Brentjens: TODO: document license types for Geonovum
   conf.isCCBY = conf.license === "cc-by";
   conf.isCCBYND = conf.license === "cc-by-nd";
@@ -201,7 +206,7 @@ export function run(conf) {
   // Deal with all current GN specStatusses the same. This is mostly seen in the links in the header for Last editor's draft etc
   // conf.isRegular = conf.specStatus !== "GN-BASIS";
   conf.isRegular = true;
-  conf.isOfficial = conf.specStatus === "GN-DEF";
+  conf.isOfficial = conf.specStatus === "DK-DEF";
 
   if (!conf.specStatus) {
     pub("error", "Missing required configuration: `specStatus`");
@@ -227,8 +232,9 @@ export function run(conf) {
       // parse the org and repo name to construct a github.io URI if a github URI is provided
       // https://github.com/Geonovum/respec/issues/141
       // https://github.com/{org}/{repo} should be rewritten to https://{org}.github.io/{repo}/
-      var githubParts = conf.github.split('github.com/')[1].split('/');
-      conf.edDraftURI = "https://" + githubParts[0] + ".github.io/" + githubParts[1];
+      var githubParts = conf.github.split("github.com/")[1].split("/");
+      conf.edDraftURI =
+        "https://" + githubParts[0] + ".github.io/" + githubParts[1];
     }
     if (conf.specStatus === "ED")
       pub("warn", "Editor's Drafts should set edDraftURI.");
@@ -255,17 +261,14 @@ export function run(conf) {
   // Only show latestVersion if a publishDate has been set. see issue https://github.com/Geonovum/respec/issues/93
   if (conf.isRegular && conf.hasBeenPublished)
     // Thijs Brentjens: see
-    conf.latestVersion =
-      "TODO" +
-      conf.pubDomain +
-      "/" +
-      conf.shortName +
-      "/";
+    conf.latestVersion = "TODO" + conf.pubDomain + "/" + conf.shortName + "/";
 
   // Thijs Brentjens: support previousMaturity as previousStatus
-  if (conf.previousMaturity && !conf.previousStatus) conf.previousStatus = conf.previousMaturity
+  if (conf.previousMaturity && !conf.previousStatus)
+    conf.previousStatus = conf.previousMaturity;
   // Thijs Brentjens: default to current specStatus if previousStatus is not provided
-  if (conf.previousPublishDate && !conf.previousStatus) conf.previousStatus = conf.specStatus
+  if (conf.previousPublishDate && !conf.previousStatus)
+    conf.previousStatus = conf.specStatus;
   if (conf.previousPublishDate && conf.previousStatus) {
     conf.previousPublishDate = validateDateAndRecover(
       conf,
@@ -274,7 +277,7 @@ export function run(conf) {
     var prevStatus = conf.previousStatus.substr(3).toLowerCase();
     // Thijs Brentjens: default to current spectype
     // TODO: should the prev-/spectype always be in the WP URL too?
-    var prevType="";
+    var prevType = "";
     if (conf.previousType) {
       prevType = conf.previousType.toLowerCase();
     } else {
@@ -295,7 +298,7 @@ export function run(conf) {
       "/";
   }
 
-  var peopCheck = function(it) {
+  var peopCheck = function (it) {
     if (!it.name) pub("error", "All authors and editors must have a name.");
   };
   if (conf.editors) {
@@ -306,7 +309,7 @@ export function run(conf) {
   }
   conf.multipleEditors = conf.editors && conf.editors.length > 1;
   conf.multipleAuthors = conf.authors && conf.authors.length > 1;
-  $.each(conf.alternateFormats || [], function(i, it) {
+  $.each(conf.alternateFormats || [], function (i, it) {
     if (!it.uri || !it.label)
       pub("error", "All alternate formats must have a uri and a label.");
   });
@@ -314,7 +317,7 @@ export function run(conf) {
     conf.alternateFormats && conf.alternateFormats.length > 1;
   conf.alternatesHTML =
     conf.alternateFormats &&
-    joinAnd(conf.alternateFormats, function(alt) {
+    joinAnd(conf.alternateFormats, function (alt) {
       var optional =
         alt.hasOwnProperty("lang") && alt.lang
           ? " hreflang='" + alt.lang + "'"
@@ -370,12 +373,9 @@ export function run(conf) {
   conf.showThisVersion = !conf.isNoTrack; // || conf.isTagFinding;
   // Thijs Brentjens: adapted for Geonovum document tyoes
   // TODO: add an extra check, because now it seems that showPreviousVersion is true in (too) many cases?
-  conf.showPreviousVersion =
-    !conf.isNoTrack &&
-    !conf.isSubmission;
+  conf.showPreviousVersion = !conf.isNoTrack && !conf.isSubmission;
   // Thijs Brentjens: only show if prevVersion is available
-  if (!conf.prevVersion)
-    conf.showPreviousVersion = false;
+  if (!conf.prevVersion) conf.showPreviousVersion = false;
   // Thijs: get specStatus from Geonovum list https://github.com/Geonovum/respec/wiki/specStatus
   conf.isGNDEF = conf.specStatus === "GN-DEF";
   conf.isGNWV = conf.specStatus === "GN-WV";
@@ -393,21 +393,21 @@ export function run(conf) {
       }
       // it's always at "pp-impl" + 1
       const urlParts = this.wgPatentURI.split("/");
-      const pos = urlParts.findIndex(item => item === "pp-impl") + 1;
+      const pos = urlParts.findIndex((item) => item === "pp-impl") + 1;
       return urlParts[pos] || "";
     },
   });
   // configuration done - yay!
 
   // insert into document
-  const header = (headersTmpl)(conf);
+  const header = headersTmpl(conf);
   document.body.insertBefore(header, document.body.firstChild);
   document.body.classList.add("h-entry");
 
   // handle SotD
   var sotd =
     document.getElementById("sotd") || document.createElement("section");
-  if ((!conf.isNoTrack) && !sotd.id) {
+  if (!conf.isNoTrack && !sotd.id) {
     pub(
       "error",
       "A custom SotD paragraph is required for your type of document."
@@ -425,8 +425,8 @@ export function run(conf) {
   //  can be shorter — but it still needs to be an array.
   var wgPotentialArray = [conf.wg, conf.wgURI, conf.wgPatentURI];
   if (
-    wgPotentialArray.some(item => Array.isArray(item)) &&
-    !wgPotentialArray.every(item => Array.isArray(item))
+    wgPotentialArray.some((item) => Array.isArray(item)) &&
+    !wgPotentialArray.every((item) => Array.isArray(item))
   ) {
     pub(
       "error",
@@ -435,7 +435,7 @@ export function run(conf) {
   }
   if (Array.isArray(conf.wg)) {
     conf.multipleWGs = conf.wg.length > 1;
-    conf.wgHTML = joinAnd(conf.wg, function(wg, idx) {
+    conf.wgHTML = joinAnd(conf.wg, function (wg, idx) {
       return "the <a href='" + conf.wgURI[idx] + "'>" + wg + "</a>";
     });
     var pats = [];
@@ -522,5 +522,5 @@ function populateSoTD(conf, sotd) {
   conf.additionalContent = additionalContent.innerHTML;
   // Whatever sections are left, we throw at the end.
   conf.additionalSections = sotdClone.innerHTML;
-  return (sotdTmpl)(conf);
+  return sotdTmpl(conf);
 }
