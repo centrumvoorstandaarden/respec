@@ -241,27 +241,25 @@ export function run(conf) {
   }
   // Version URLs
   // Thijs Brentjens: changed this to Geonovum specific format. See https://github.com/Geonovum/respec/issues/126
-  if (conf.isRegular && conf.specStatus !== "GN-WV") {
-    conf.thisVersion =
-      "TODO" +
-      conf.pubDomain +
-      "/" +
-      conf.specStatus.substr(3).toLowerCase() +
-      "-" +
-      conf.specType.toLowerCase() +
-      "-" +
-      conf.shortName +
-      "-" +
-      concatDate(conf.publishDate) +
-      "/";
+  if (conf.isRegular && conf.specStatus !== "DK-WV") {
+    conf.thisVersion = "geen";
+    // "http://test-docs.centrumvoorstandaarden.nl/" +
+    // conf.pubDomain +
+    // "/" +
+    // conf.specStatus.substr(3).toLowerCase() +
+    // "-" +
+    // conf.specType.toLowerCase() +
+    // "-" +
+    // conf.shortName +
+    // "-" +
+    // concatDate(conf.publishDate) +
+    // "/";
   } else {
     conf.thisVersion = conf.edDraftURI;
   }
 
   // Only show latestVersion if a publishDate has been set. see issue https://github.com/Geonovum/respec/issues/93
-  if (conf.isRegular && conf.hasBeenPublished)
-    // Thijs Brentjens: see
-    conf.latestVersion = "TODO" + conf.pubDomain + "/" + conf.shortName + "/";
+  if (conf.isRegular && conf.hasBeenPublished) conf.latestVersion = "geen";
 
   // Thijs Brentjens: support previousMaturity as previousStatus
   if (conf.previousMaturity && !conf.previousStatus)
@@ -284,18 +282,18 @@ export function run(conf) {
       prevType = conf.specType.toLowerCase();
     }
     conf.prevVersion = "None" + conf.previousPublishDate;
-    conf.prevVersion =
-      "TODO" +
-      conf.pubDomain +
-      "/" +
-      prevStatus +
-      "-" +
-      prevType +
-      "-" +
-      conf.shortName +
-      "-" +
-      concatDate(conf.previousPublishDate) +
-      "/";
+    conf.prevVersion = "geen";
+    // "TODO" +
+    // conf.pubDomain +
+    // "/" +
+    // prevStatus +
+    // "-" +
+    // prevType +
+    // "-" +
+    // conf.shortName +
+    // "-" +
+    // concatDate(conf.previousPublishDate) +
+    // "/";
   }
 
   var peopCheck = function (it) {
@@ -377,11 +375,14 @@ export function run(conf) {
   // Thijs Brentjens: only show if prevVersion is available
   if (!conf.prevVersion) conf.showPreviousVersion = false;
   // Thijs: get specStatus from Geonovum list https://github.com/Geonovum/respec/wiki/specStatus
-  conf.isGNDEF = conf.specStatus === "GN-DEF";
-  conf.isGNWV = conf.specStatus === "GN-WV";
-  conf.isGNCV = conf.specStatus === "GN-CV";
-  conf.isGNVV = conf.specStatus === "GN-VV";
-  conf.isGNBASIS = conf.specStatus === "GN-BASIS";
+  conf.isGNDEF = conf.specStatus === "DK-DEF";
+  conf.isGNWV = conf.specStatus === "DK-WV";
+  conf.isGNCV = conf.specStatus === "DK-CV";
+  conf.isGNVV = conf.specStatus === "DK-VV";
+  conf.isGNEO = conf.specStatus === "DK-EO";
+  conf.isGNTG = conf.specStatus === "DK-TG";
+  conf.isGNTO = conf.specStatus === "DK-TO";
+  conf.isGNBASIS = conf.specStatus === "DK-BASIS";
 
   conf.dashDate = ISODate.format(conf.publishDate);
   conf.publishISODate = conf.publishDate.toISOString();
