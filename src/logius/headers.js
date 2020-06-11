@@ -281,7 +281,7 @@ export function run(conf) {
     } else {
       prevType = conf.specType.toLowerCase();
     }
-    conf.prevVersion = "None" + conf.previousPublishDate;
+    conf.prevVersion = "" + conf.previousPublishDate;
     conf.prevVersion = "";
     // "TODO" +
     // conf.pubDomain +
