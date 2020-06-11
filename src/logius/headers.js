@@ -242,7 +242,7 @@ export function run(conf) {
   // Version URLs
   // Thijs Brentjens: changed this to Geonovum specific format. See https://github.com/Geonovum/respec/issues/126
   if (conf.isRegular && conf.specStatus !== "DK-WV") {
-    conf.thisVersion = "geen";
+    // conf.thisVersion = "";
     // "http://test-docs.centrumvoorstandaarden.nl/" +
     // conf.pubDomain +
     // "/" +
