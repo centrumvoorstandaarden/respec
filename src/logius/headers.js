@@ -259,7 +259,7 @@ export function run(conf) {
   }
 
   // Only show latestVersion if a publishDate has been set. see issue https://github.com/Geonovum/respec/issues/93
-  if (conf.isRegular && conf.hasBeenPublished) conf.latestVersion = "geen";
+  if (conf.isRegular && conf.hasBeenPublished) conf.latestVersion = "";
 
   // Thijs Brentjens: support previousMaturity as previousStatus
   if (conf.previousMaturity && !conf.previousStatus)
@@ -282,7 +282,7 @@ export function run(conf) {
       prevType = conf.specType.toLowerCase();
     }
     conf.prevVersion = "None" + conf.previousPublishDate;
-    conf.prevVersion = "geen";
+    conf.prevVersion = "";
     // "TODO" +
     // conf.pubDomain +
     // "/" +
